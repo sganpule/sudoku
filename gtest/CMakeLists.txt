@@ -11,9 +11,9 @@ target_include_directories(hello_test PUBLIC
 target_link_libraries(
   hello_test
   PUBLIC
-  sudoku_lib
-  GTest::gtest_main
+      sudoku_lib
+      GTest::gtest_main
 )
-include(GoogleTest)
 
+include(GoogleTest)
 gtest_discover_tests(hello_test)
