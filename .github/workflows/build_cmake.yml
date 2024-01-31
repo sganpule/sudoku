@@ -40,6 +40,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      shell: pwd && ls
 
     - name: Download Ninja and CMake
       shell: cmake -P {0}
