@@ -7,12 +7,16 @@
 
 using namespace std;
 
-int parse_input(int argc, char* argv[])
+int parse_input(int argc, char* argv[], string& inputFile)
 {
     if (argc != 2)
     {
         cout << "Usage: sudoku_app <inputfile>" << endl;
         return -1;
+    }
+    else
+    {
+        inputFile = argv[1];
     }
     return 0;
 }
@@ -20,10 +24,13 @@ int parse_input(int argc, char* argv[])
 int main(int argc, char* argv[])
 {
     cout << "Welcome to the sudoku solver" << endl;
-    if (-1 == parse_input(argc, argv))
+
+    string inputFile;
+    if (-1 == parse_input(argc, argv, inputFile))
     {
         exit(1);
     }
+    cout << "Solving input file '" << inputFile << "'..." << endl;
 
     cout << "Reading in 10: " << read(10) << endl;
 
