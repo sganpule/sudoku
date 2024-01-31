@@ -7,9 +7,23 @@
 
 using namespace std;
 
-int main()
+int parse_input(int argc, char* argv[])
+{
+    if (argc != 2)
+    {
+        cout << "Usage: sudoku_app <inputfile>" << endl;
+        return -1;
+    }
+    return 0;
+}
+
+int main(int argc, char* argv[])
 {
     cout << "Welcome to the sudoku solver" << endl;
+    if (-1 == parse_input(argc, argv))
+    {
+        exit(1);
+    }
 
     cout << "Reading in 10: " << read(10) << endl;
 
