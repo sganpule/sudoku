@@ -159,9 +159,6 @@ jobs:
         endif()
         set(ENV{PATH} "$ENV{GITHUB_WORKSPACE}${path_separator}$ENV{PATH}")
 
-        execute_process(COMMAND pwd)
-        execute_process(COMMAND ls)
-
         execute_process(
           COMMAND cmake
             -S .
