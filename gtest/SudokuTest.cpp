@@ -16,4 +16,9 @@ TEST(HelloTest, SudokuLibTests) {
 
     // Expect the read function to return (arg+1)
     EXPECT_EQ(12, read(11));
+
+    // Make an instance
+    Sudoku s;
+
+    //s.read_in();
 }
