@@ -6,15 +6,21 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 ## Main Application
-add_executable(sudoku_app sudoku_app.cpp SudokuReader.cpp)
+add_executable(sudoku_app sudoku_app.cpp)
 
-## Sudoku Library
+## Set up Sudoku Library and Sudoku Reader Libary
 add_subdirectory(sudoku_lib)
+add_subdirectory(sudoku_reader_lib)
 target_include_directories(sudoku_app PUBLIC
-                           "${PROJECT_SOURCE_DIR}/sudoku_lib")
+                           "${PROJECT_SOURCE_DIR}/sudoku_lib"
+                           "${PROJECT_SOURCE_DIR}/sudoku_reader_lib")
+
 
 ## Linking
-target_link_libraries(sudoku_app PUBLIC sudoku_lib gtest gtest_main gmock gmock_main)
+target_link_libraries(sudoku_app PUBLIC 
+                      sudoku_lib
+                      sudoku_reader_lib
+                      gtest gtest_main gmock gmock_main)
 
 ## Google Test
 include(FetchContent)

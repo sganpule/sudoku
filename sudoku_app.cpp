@@ -7,16 +7,24 @@
 
 using namespace std;
 
+const int NumArgumentsForApp = 2;
+
+enum
+{
+    ApplicationName,
+    InputFileName
+} InputArguments;
+
 int parse_input(int argc, char* argv[], string& inputFile)
 {
-    if (argc != 2)
+    if (argc != NumArgumentsForApp)
     {
         cout << "Usage: sudoku_app <inputfile>" << endl;
         return -1;
     }
     else
     {
-        inputFile = argv[1];
+        inputFile = argv[InputFileName];
     }
     return 0;
 }
@@ -35,14 +43,16 @@ int main(int argc, char* argv[])
     cout << "Reading in 10: " << read(10) << endl;
 
     fstream fin;
-    fin.open("../inputs/easy_input_1.txt");
+    fin.open(inputFile);
     if (!(fin.is_open()))
     {
-        cerr << "File open error!" << endl;
+        cerr << "File open error! Could not open '" 
+             << inputFile << "'."
+             << endl;
         exit(EXIT_FAILURE);
     }
 
-    vector< vector<int> > square;
-    sudokuRead(fin, &square);
+    SudokuReader reader;
+    reader.readFile(fin);
     
 }

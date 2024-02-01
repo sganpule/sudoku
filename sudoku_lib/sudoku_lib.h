@@ -16,6 +16,6 @@ class Sudoku
 
     private:
 
-    vector<vector<int>> square;
-    vector<vector<vector<int>*>> sqposs;
+    vector< vector< int          > > square;
+    vector< vector< vector<int>* > > sqposs;
 };
