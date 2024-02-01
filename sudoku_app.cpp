@@ -15,12 +15,51 @@ enum
     InputFileName
 } InputArguments;
 
-int parse_input(int argc, char* argv[], string& inputFile)
+enum
+{
+    NoError,
+    IncorrectCommandLineUsage,
+    CouldNotOpenInputFile
+} ErrorValues;
+
+// Forward declarations
+int parseInput(int argc, char* argv[], string& inputFile);
+int openInputFile(fstream& fin, string& inputFileName);
+
+int main(int argc, char* argv[])
+{
+    cout << "Welcome to the sudoku solver" << endl;
+
+    // Get input file
+    string inputFile;
+    if (-1 == parseInput(argc, argv, inputFile))
+    {
+        exit(EXIT_FAILURE);
+    }
+
+    // Open input file
+    fstream fin;
+    if (openInputFile(fin, inputFile))
+    {
+        exit(EXIT_FAILURE);
+    }
+
+    cout << "Solving input file '" << inputFile << "'..." << endl;
+
+    cout << "Reading in 10: " << read(10) << endl;
+
+
+    SudokuReader reader;
+    reader.readFile(fin);
+    
+}
+
+int parseInput(int argc, char* argv[], string& inputFile)
 {
     if (argc != NumArgumentsForApp)
     {
         cout << "Usage: sudoku_app <inputfile>" << endl;
-        return -1;
+        return IncorrectCommandLineUsage;
     }
     else
     {
@@ -29,30 +68,19 @@ int parse_input(int argc, char* argv[], string& inputFile)
     return 0;
 }
 
-int main(int argc, char* argv[])
+int openInputFile(fstream& fin, string& inputFileName)
 {
-    cout << "Welcome to the sudoku solver" << endl;
+    int returnVal = 0;
 
-    string inputFile;
-    if (-1 == parse_input(argc, argv, inputFile))
-    {
-        exit(1);
-    }
-    cout << "Solving input file '" << inputFile << "'..." << endl;
-
-    cout << "Reading in 10: " << read(10) << endl;
-
-    fstream fin;
-    fin.open(inputFile);
+    fin.open(inputFileName);
     if (!(fin.is_open()))
     {
         cerr << "File open error! Could not open '" 
-             << inputFile << "'."
+             << inputFileName << "'."
              << endl;
-        exit(EXIT_FAILURE);
+        returnVal = CouldNotOpenInputFile;
     }
 
-    SudokuReader reader;
-    reader.readFile(fin);
-    
+    return returnVal;
 }
+

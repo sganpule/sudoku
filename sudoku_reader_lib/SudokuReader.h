@@ -9,6 +9,8 @@ using namespace std;
 
 int sudokuRead(fstream& is, vector<vector<int>> *square);
 
+const int SudokuReaderDim = 9;
+
 class SudokuReader
 {
     public:
