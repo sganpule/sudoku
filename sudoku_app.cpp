@@ -20,7 +20,7 @@ enum
     NoError,
     IncorrectCommandLineUsage,
     CouldNotOpenInputFile
-} ErrorValues;
+} SudokuAppErrorValues;
 
 // Forward declarations
 int parseInput(int argc, char* argv[], string& inputFile);

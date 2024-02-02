@@ -16,14 +16,48 @@ TEST(SudokuReaderTest, BasicAssertions) {
 
 }
 
-// Tests against the sudoku_lib.
-TEST(SudokuReaderTest, SudokuReaderTests) {
+int openInputFile(fstream& fin, string& inputFileName)
+{
+    int returnVal = 0;
 
-    // Expect the read function to return (arg+1)
-    EXPECT_EQ(12, 12);
+    fin.open(inputFileName);
+    if (!(fin.is_open()))
+    {
+        cerr << "File open error! Could not open '" 
+             << inputFileName << "'."
+             << endl;
+        returnVal = -1;
+    }
+
+    return returnVal;
+}
+
+
+
+// Tests against the sudoku_lib.
+TEST(SudokuReaderTest, EmptyFirstCell) {
+
+    fstream fin;
+    string  inputFile("../inputs/easy_input_2.txt");
+    ASSERT_EQ(0, openInputFile(fin, inputFile));
 
     // Make an instance
     SudokuReader sr;
 
-    //s.read_in();
+    // Read file
+    sr.readFile(fin);
+}
+
+// Tests against the sudoku_lib.
+TEST(SudokuReaderTest, InvalidEntry) {
+
+    fstream fin;
+    string  inputFile("../inputs/error_easy_input_1.txt");
+    ASSERT_EQ(0, openInputFile(fin, inputFile));
+
+    // Make an instance
+    SudokuReader sr;
+
+    // Read file
+    sr.readFile(fin);
 }

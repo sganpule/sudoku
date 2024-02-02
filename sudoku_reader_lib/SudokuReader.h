@@ -13,13 +13,24 @@ const int SudokuReaderDim = 9;
 
 class SudokuReader
 {
-    public:
+
+public:
 
     SudokuReader();
     
     int readFile(fstream& is);
 
-    private:
+    enum
+    {
+        NoError,
+        FoundEntryLongerThanSingleChar,
+        FoundEntryThatIsNotADigit
+    } SudokuReaderErrorValues;
+
+    static const string DotSeparator;
+    static const string XSeparator;
+
+private:
 
     bool                    inSquareValid;
     vector< vector<int> >   inSquare;
