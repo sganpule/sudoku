@@ -1,10 +1,53 @@
 // Test app for sudoku library
 
 #include <gtest/gtest.h>
+#include <iostream>
 #include "SudokuReader.h"
 
+using namespace std;
+
+
+// The fixture for testing class Foo.
+class SudokuReaderTest : public testing::Test {
+ protected:
+  // You can remove any or all of the following functions if their bodies would
+  // be empty.
+
+  SudokuReaderTest() {
+     // You can do set-up work for each test here.
+  }
+
+  ~SudokuReaderTest() override {
+     // You can do clean-up work that doesn't throw exceptions here.
+  }
+
+  // If the constructor and destructor are not enough for setting up
+  // and cleaning up each test, you can define the following methods:
+
+  void SetUp() override {
+     // Code here will be called immediately after the constructor (right
+     // before each test).
+     
+  }
+
+  void TearDown() override {
+     // Code here will be called immediately after each test (right
+     // before the destructor).
+  }
+
+  // Class members declared here can be used by all tests in the test suite
+  // for Foo.
+
+    fstream         m_fin;
+    string          m_inputFile;
+    SudokuReader    m_sr;
+
+};
+
+
+
 // Demonstrate some basic assertions.
-TEST(SudokuReaderTest, BasicAssertions) {
+TEST_F(SudokuReaderTest, BasicAssertions) {
 
     // Expect two strings not to be equal.
     EXPECT_STRNE("hello", "world");
@@ -35,29 +78,31 @@ int openInputFile(fstream& fin, string& inputFileName)
 
 
 // Tests against the sudoku_lib.
-TEST(SudokuReaderTest, EmptyFirstCell) {
+TEST_F(SudokuReaderTest, EmptyFirstCell) {
 
-    fstream fin;
-    string  inputFile("../inputs/easy_input_2.txt");
-    ASSERT_EQ(0, openInputFile(fin, inputFile));
-
-    // Make an instance
-    SudokuReader sr;
+    m_inputFile = "../inputs/easy_input_2.txt";
+    ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
 
     // Read file
-    sr.readFile(fin);
+    m_sr.readFile(m_fin);
 }
 
 // Tests against the sudoku_lib.
-TEST(SudokuReaderTest, InvalidEntry) {
+TEST_F(SudokuReaderTest, InvalidEntry) {
 
-    fstream fin;
-    string  inputFile("../inputs/error_easy_input_1.txt");
-    ASSERT_EQ(0, openInputFile(fin, inputFile));
-
-    // Make an instance
-    SudokuReader sr;
+    m_inputFile = "../inputs/error_easy_input_1.txt";
+    ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
 
     // Read file
-    sr.readFile(fin);
+    //m_sr.readFile(fin);
+}
+
+// Tests against the sudoku_lib.
+TEST_F(SudokuReaderTest, HappyPath) {
+
+    m_inputFile = "../inputs/easy_input_1.txt";
+    ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
+
+    // Read file
+    m_sr.readFile(m_fin);
 }
