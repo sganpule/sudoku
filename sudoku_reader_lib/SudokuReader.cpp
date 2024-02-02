@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <assert.h>
+#include <ctype.h>
 
 #include "SudokuReader.h"
 
@@ -42,69 +43,56 @@ SudokuReader::SudokuReader() : inSquareValid(false)
     assert(SudokuReaderDim == inSquare[0].size());
 }
 
-int static getNextInput(fstream& is)
+int static getNextInput(fstream& is, int& retVal)
 {
     string  cin;
     int     cin_int;
-    int     returnVal = 0;
+    int     status = 0;
 
     is >> cin;
     if (cin.length() != 1)
     {
-       cerr << "Found an entry (" 
-            << cin 
-            << ") longer than a single character" << endl;
-        returnVal = SudokuReader::FoundEntryLongerThanSingleChar;
+        // Entry longer than a single character
+        status = SudokuReader::FoundEntryLongerThanSingleChar;
     }
 
-    if ( cin.compare(SudokuReader::DotSeparator) ||
-         cin.compare(SudokuReader::XSeparator)      ) 
+    // Check for separator
+    if ( !cin.compare(SudokuReader::XSeparator)   ||
+         !cin.compare(SudokuReader::DotSeparator)    )
     {
-        // Set entry to 0;
+        retVal = 0;
     } 
     else
     {
-        cin_int = stoi(cin);
-        if ( (cin_int < 1) ||
-             (cin_int > 9)    )
         {
-           cin_int = 0;
-           cerr << "Found an entry (" 
-                << cin 
-                << ") not between 1-9... Replacing with 0" << endl;
+        }
 
-            returnVal = SudokuReader::FoundEntryThatIsNotADigit;
+        // Check for non-numeric input
+        if ( !isdigit(cin.at(0)) )
+        {
+            retVal = 0;
+            status = SudokuReader::FoundEntryThatIsNotADigit;
+        }
+        else
+        {
+            cin_int = stoi(cin);
+
+            // Update number
+            retVal = cin_int;
+            status = SudokuReader::NoError;
+
         }
     }
 
-    return returnVal;
+    return status;
 }
 int SudokuReader::readFile(fstream& is)
 {
     string  cin;
-    int     cin_int;
-    int     returnVal = 0;
+    int     status = 0;
+    int     retVal;
 
-    is >> cin;
-    if (cin.length() != 1)
-    {
-       cerr << "Found an entry (" 
-            << cin 
-            << ") longer than a single character" << endl;
-        returnVal = FoundEntryLongerThanSingleChar;
-    }
-    cin_int = stoi(cin);
-    if ( (cin_int < 1) ||
-         (cin_int > 9)    )
-    {
-       cin_int = 0;
-       cerr << "Found an entry (" 
-            << cin 
-            << ") not between 1-9... Replacing with 0" << endl;
+    status = getNextInput(is, retVal);
 
-        returnVal = 1;
-    }
-    cout << cin_int;
-
-    return returnVal;
+    return status;
 }

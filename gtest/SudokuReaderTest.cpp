@@ -76,28 +76,8 @@ int openInputFile(fstream& fin, string& inputFileName)
 }
 
 
-
 // Tests against the sudoku_lib.
-TEST_F(SudokuReaderTest, EmptyFirstCell) {
 
-    m_inputFile = "../inputs/easy_input_2.txt";
-    ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
-
-    // Read file
-    m_sr.readFile(m_fin);
-}
-
-// Tests against the sudoku_lib.
-TEST_F(SudokuReaderTest, InvalidEntry) {
-
-    m_inputFile = "../inputs/error_easy_input_1.txt";
-    ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
-
-    // Read file
-    //m_sr.readFile(fin);
-}
-
-// Tests against the sudoku_lib.
 TEST_F(SudokuReaderTest, HappyPath) {
 
     m_inputFile = "../inputs/easy_input_1.txt";
@@ -106,3 +86,31 @@ TEST_F(SudokuReaderTest, HappyPath) {
     // Read file
     m_sr.readFile(m_fin);
 }
+
+TEST_F(SudokuReaderTest, FirstCellUnknownValidDotSeparator) {
+
+    m_inputFile = "../inputs/easy_input_2.txt";
+    ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
+
+    // Read file
+    m_sr.readFile(m_fin);
+}
+
+TEST_F(SudokuReaderTest, DoubleDigitEntry) {
+
+    m_inputFile = "../inputs/error_easy_input_1.txt";
+    ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
+
+    // Read file
+    m_sr.readFile(m_fin);
+}
+
+TEST_F(SudokuReaderTest, NonNumericEntry) {
+
+    m_inputFile = "../inputs/nonnumeric_input.txt";
+    ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
+
+    // Read file
+    m_sr.readFile(m_fin);
+}
+
