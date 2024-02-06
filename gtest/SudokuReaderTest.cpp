@@ -80,9 +80,8 @@ int openInputFile(fstream& fin, string& inputFileName)
 
 TEST_F(SudokuReaderTest, HappyPath) {
 
-    fstream fin;
     m_inputFile = "../inputs/easy_input_1.txt";
-    ASSERT_EQ(0, openInputFile(fin, m_inputFile));
+    ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
 
     // Read file
     m_sr.readFile(m_fin);
