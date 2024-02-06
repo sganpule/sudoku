@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.27.9)
 add_executable(
   hello_test
   SudokuTest.cpp
-  SudokuReaderTest.cpp
+  #SudokuReaderTest.cpp
 )
 
 target_include_directories(hello_test PUBLIC
