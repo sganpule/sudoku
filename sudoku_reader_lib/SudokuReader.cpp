@@ -14,25 +14,6 @@ using namespace std;
 const string SudokuReader::DotSeparator = ".";
 const string SudokuReader::XSeparator   = "x";
 
-int sudokuRead(fstream& is, vector<vector<int>> *square)
-{
-    string              cin;
-    int                 cin_int;
-    int                 returnVal = 0;
-
-    is >> cin;
-    cin_int = stoi(cin);
-    if ( (cin_int < 1) || (cin_int > 9) )
-    {
-       cin_int = 0;
-       cerr << "Found an entry (" 
-            << cin 
-            << ") not between 1-9... Replacing with 0" << endl;
-    }
-    cout << cin_int;
-
-    return returnVal;
-}
 
 SudokuReader::SudokuReader() 
              :inSquareValid(false)
@@ -62,7 +43,8 @@ int static getNextInput(fstream& is, int& retVal)
          !cin.compare(SudokuReader::DotSeparator)    )
     {
         // Yes it is a separator
-        // Test: inputs/easy_input_2.txt
+        // Test: inputs/x_separator_input.txt
+        // Test: inputs/dot_separator_input.txt
         retVal = 0;
         status = SudokuReader::NoError;
     } 

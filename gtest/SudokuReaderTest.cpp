@@ -87,9 +87,18 @@ TEST_F(SudokuReaderTest, HappyPath) {
     m_sr.readFile(m_fin);
 }
 
+TEST_F(SudokuReaderTest, FirstCellUnknownValidXSeparator) {
+
+    m_inputFile = "../../inputs/x_separator_input.txt";
+    ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
+
+    // Read file
+    m_sr.readFile(m_fin);
+}
+
 TEST_F(SudokuReaderTest, FirstCellUnknownValidDotSeparator) {
 
-    m_inputFile = "../../inputs/easy_input_2.txt";
+    m_inputFile = "../../inputs/dot_separator_input.txt";
     ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
 
     // Read file
