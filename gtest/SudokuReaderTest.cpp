@@ -84,25 +84,28 @@ TEST_F(SudokuReaderTest, HappyPath) {
     ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
 
     // Read file
-    m_sr.readFile(m_fin);
+    int status = m_sr.readFile(m_fin);
+    ASSERT_EQ(status, SudokuReader::NoError);
 }
 
-TEST_F(SudokuReaderTest, FirstCellUnknownValidXSeparator) {
+TEST_F(SudokuReaderTest, FirstCellValidXSeparator) {
 
     m_inputFile = "../../inputs/x_separator_input.txt";
     ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
 
     // Read file
-    m_sr.readFile(m_fin);
+    int status = m_sr.readFile(m_fin);
+    ASSERT_EQ(status, SudokuReader::NoError);
 }
 
-TEST_F(SudokuReaderTest, FirstCellUnknownValidDotSeparator) {
+TEST_F(SudokuReaderTest, FirstCellValidDotSeparator) {
 
     m_inputFile = "../../inputs/dot_separator_input.txt";
     ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
 
     // Read file
-    m_sr.readFile(m_fin);
+    int status = m_sr.readFile(m_fin);
+    ASSERT_EQ(status, SudokuReader::NoError);
 }
 
 TEST_F(SudokuReaderTest, DoubleDigitEntry) {
@@ -111,15 +114,36 @@ TEST_F(SudokuReaderTest, DoubleDigitEntry) {
     ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
 
     // Read file
-    m_sr.readFile(m_fin);
+    int status = m_sr.readFile(m_fin);
+    ASSERT_EQ(status, SudokuReader::FoundEntryLongerThanSingleChar);
 }
 
-TEST_F(SudokuReaderTest, NonNumericEntry) {
+TEST_F(SudokuReaderTest, NonNumericEntry1) {
 
-    m_inputFile = "../../inputs/nonnumeric_input.txt";
+    m_inputFile = "../../inputs/error_nonnumeric_input_1.txt";
     ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
 
     // Read file
-    m_sr.readFile(m_fin);
+    int status = m_sr.readFile(m_fin);
+    ASSERT_EQ(status, SudokuReader::FoundEntryThatIsNotADigit);
 }
 
+TEST_F(SudokuReaderTest, NonNumericEntry2) {
+
+    m_inputFile = "../../inputs/error_nonnumeric_input_2.txt";
+    ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
+
+    // Read file
+    int status = m_sr.readFile(m_fin);
+    ASSERT_EQ(status, SudokuReader::FoundEntryThatIsNotADigit);
+}
+
+TEST_F(SudokuReaderTest, NonNumericEntry3) {
+
+    m_inputFile = "../../inputs/error_nonnumeric_input_3.txt";
+    ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
+
+    // Read file
+    int status = m_sr.readFile(m_fin);
+    ASSERT_EQ(status, SudokuReader::FoundEntryThatIsNotADigit);
+}

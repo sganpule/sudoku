@@ -9,7 +9,6 @@ using namespace std;
 
 int sudokuRead(fstream& is, vector<vector<int>> *square);
 
-const int SudokuReaderDim = 9;
 
 class SudokuReader
 {
@@ -28,6 +27,7 @@ public:
         FoundInvalidSeparator
     } SudokuReaderErrorValues;
 
+    static const int    Dimension;
     static const string DotSeparator;
     static const string XSeparator;
 
