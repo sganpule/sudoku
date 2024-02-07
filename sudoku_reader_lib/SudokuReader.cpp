@@ -22,8 +22,7 @@ int sudokuRead(fstream& is, vector<vector<int>> *square)
 
     is >> cin;
     cin_int = stoi(cin);
-    if ( (cin_int < 1) ||
-         (cin_int > 9)    )
+    if ( (cin_int < 1) || (cin_int > 9) )
     {
        cin_int = 0;
        cerr << "Found an entry (" 
@@ -35,7 +34,8 @@ int sudokuRead(fstream& is, vector<vector<int>> *square)
     return returnVal;
 }
 
-SudokuReader::SudokuReader() : inSquareValid(false)
+SudokuReader::SudokuReader() 
+             :inSquareValid(false)
 {
     // Resize sudoku square storage to SudokuReaderDim x SudokuReaderDim
     inSquare.resize( SudokuReaderDim, vector<int>(SudokuReaderDim) );
@@ -53,28 +53,32 @@ int static getNextInput(fstream& is, int& retVal)
     if (cin.length() != 1)
     {
         // Entry longer than a single character
+        // Test: inputs/error_not_single_char_input.txt
         status = SudokuReader::FoundEntryLongerThanSingleChar;
     }
 
-    // Check for separator
+    // Check if it a known separator, either '.' or 'x'.
     if ( !cin.compare(SudokuReader::XSeparator)   ||
          !cin.compare(SudokuReader::DotSeparator)    )
     {
+        // Yes it is a separator
+        // Test: inputs/easy_input_2.txt
         retVal = 0;
+        status = SudokuReader::NoError;
     } 
     else
     {
-        {
-        }
-
         // Check for non-numeric input
         if ( !isdigit(cin.at(0)) )
         {
+            // It is not a known separator, and not a digit
+            // Test: inputs/nonnumeric_input.txt
             retVal = 0;
             status = SudokuReader::FoundEntryThatIsNotADigit;
         }
         else
         {
+            // It is a known separator, and a digit. Proceed.
             cin_int = stoi(cin);
 
             // Update number

@@ -24,7 +24,8 @@ public:
     {
         NoError,
         FoundEntryLongerThanSingleChar,
-        FoundEntryThatIsNotADigit
+        FoundEntryThatIsNotADigit,
+        FoundInvalidSeparator
     } SudokuReaderErrorValues;
 
     static const string DotSeparator;

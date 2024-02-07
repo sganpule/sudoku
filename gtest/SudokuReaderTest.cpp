@@ -98,7 +98,7 @@ TEST_F(SudokuReaderTest, FirstCellUnknownValidDotSeparator) {
 
 TEST_F(SudokuReaderTest, DoubleDigitEntry) {
 
-    m_inputFile = "../../inputs/error_easy_input_1.txt";
+    m_inputFile = "../../inputs/error_not_single_char_input.txt";
     ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
 
     // Read file
