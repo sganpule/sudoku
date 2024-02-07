@@ -80,7 +80,7 @@ int openInputFile(fstream& fin, string& inputFileName)
 
 TEST_F(SudokuReaderTest, HappyPath) {
 
-    m_inputFile = "../inputs/easy_input_1.txt";
+    m_inputFile = "../../inputs/easy_input_1.txt";
     ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
 
     // Read file
@@ -89,7 +89,7 @@ TEST_F(SudokuReaderTest, HappyPath) {
 
 TEST_F(SudokuReaderTest, FirstCellUnknownValidDotSeparator) {
 
-    m_inputFile = "../inputs/easy_input_2.txt";
+    m_inputFile = "../../inputs/easy_input_2.txt";
     ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
 
     // Read file
@@ -98,7 +98,7 @@ TEST_F(SudokuReaderTest, FirstCellUnknownValidDotSeparator) {
 
 TEST_F(SudokuReaderTest, DoubleDigitEntry) {
 
-    m_inputFile = "../inputs/error_easy_input_1.txt";
+    m_inputFile = "../../inputs/error_easy_input_1.txt";
     ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
 
     // Read file
@@ -107,7 +107,7 @@ TEST_F(SudokuReaderTest, DoubleDigitEntry) {
 
 TEST_F(SudokuReaderTest, NonNumericEntry) {
 
-    m_inputFile = "../inputs/nonnumeric_input.txt";
+    m_inputFile = "../../inputs/nonnumeric_input.txt";
     ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
 
     // Read file
