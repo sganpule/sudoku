@@ -3,10 +3,6 @@
 #include "sudoku_lib.h"
 #include <assert.h>
 
-int read(int arg)
-{
-    return (arg+1);
-}
 
 Sudoku::Sudoku(void)
 {

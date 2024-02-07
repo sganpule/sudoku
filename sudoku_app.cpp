@@ -26,13 +26,15 @@ enum
 int parseInput(int argc, char* argv[], string& inputFile);
 int openInputFile(fstream& fin, string& inputFileName);
 
+
+
 int main(int argc, char* argv[])
 {
     cout << "Welcome to the sudoku solver" << endl;
 
     // Get input file
     string inputFile;
-    if (-1 == parseInput(argc, argv, inputFile))
+    if (IncorrectCommandLineUsage == parseInput(argc, argv, inputFile))
     {
         exit(EXIT_FAILURE);
     }
@@ -46,31 +48,38 @@ int main(int argc, char* argv[])
 
     cout << "Solving input file '" << inputFile << "'..." << endl;
 
-    cout << "Reading in 10: " << read(10) << endl;
-
-
+    // Read in the puzzle
+    int          status;
     SudokuReader reader;
-    reader.readFile(fin);
+    if ( (status = reader.readFile(fin)) )
+    {
+        cout << "Error " << status << " found while reading in '" << inputFile << "'.\n";
+    }
     
 }
 
+
+
 int parseInput(int argc, char* argv[], string& inputFile)
 {
+    int retVal = NoError;
+
     if (argc != NumArgumentsForApp)
     {
         cout << "Usage: sudoku_app <inputfile>" << endl;
-        return IncorrectCommandLineUsage;
+        retVal = IncorrectCommandLineUsage;
     }
     else
     {
+        retVal = NoError;
         inputFile = argv[InputFileName];
     }
-    return 0;
+    return retVal;
 }
 
 int openInputFile(fstream& fin, string& inputFileName)
 {
-    int returnVal = 0;
+    int retVal = NoError;
 
     fin.open(inputFileName);
     if (!(fin.is_open()))
@@ -78,9 +87,9 @@ int openInputFile(fstream& fin, string& inputFileName)
         cerr << "File open error! Could not open '" 
              << inputFileName << "'."
              << endl;
-        returnVal = CouldNotOpenInputFile;
+        retVal = CouldNotOpenInputFile;
     }
 
-    return returnVal;
+    return retVal;
 }
 

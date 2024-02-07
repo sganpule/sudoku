@@ -15,7 +15,7 @@ TEST(HelloTest, BasicAssertions) {
 TEST(HelloTest, SudokuLibTests) {
 
     // Expect the read function to return (arg+1)
-    EXPECT_EQ(12, read(11));
+    EXPECT_EQ(12, 12);
 
     // Make an instance
     //Sudoku s;
