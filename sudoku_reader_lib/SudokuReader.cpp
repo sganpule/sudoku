@@ -83,7 +83,11 @@ int SudokuReader::readFile(fstream& is)
         for ( int j = 0 ; j < SudokuReader::Dimension ; j++ )
         {
             status = getNextInput(is, retVal);
-            if (SudokuReader::NoError != status)
+            if (SudokuReader::NoError == status)
+            {
+                inSquare[i][j] = retVal;
+            }
+            else
             {
                 // cout << "Found read in issue " << status << " at location " << i << ", " << j << ".\n";
                 goto cleanup;

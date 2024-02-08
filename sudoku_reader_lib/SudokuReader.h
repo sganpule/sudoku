@@ -7,8 +7,6 @@
 
 using namespace std;
 
-int sudokuRead(fstream& is, vector<vector<int>> *square);
-
 
 class SudokuReader
 {

@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
     SudokuReader reader;
     if ( (status = reader.readFile(fin)) )
     {
-        cout << "Error " << status << " found while reading in '" << inputFile << "'.\n";
+        cerr << "Error " << status << " found while reading in '" << inputFile << "'.\n";
     }
     
 }
