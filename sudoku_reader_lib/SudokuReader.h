@@ -26,6 +26,8 @@ public:
         FoundInvalidSeparator
     } SudokuReaderErrorValues;
 
+    static const int    NumLocalSq;
+    static const int    LocalSqDim;
     static const int    Dimension;
     static const string DotSeparator;
     static const string XSeparator;

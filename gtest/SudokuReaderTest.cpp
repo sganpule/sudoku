@@ -185,3 +185,38 @@ TEST_F(SudokuReaderTest, ValidateErrorHorzInput) {
     status = m_sr.isValid();
     ASSERT_FALSE(status);
 }
+
+
+TEST_F(SudokuReaderTest, ValidateErrorLocSqInput1) {
+
+    // Reduplication error in first local square
+    m_inputFile = "../../inputs/error_invalid_square_loc_sq_input_1.txt";
+    ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
+
+    int status;
+
+    // Read file
+    status = m_sr.readFile(m_fin);
+    ASSERT_EQ(status, SudokuReader::NoError);
+
+    // Validate current square state
+    status = m_sr.isValid();
+    ASSERT_FALSE(status);
+}
+
+TEST_F(SudokuReaderTest, ValidateErrorLocSqInput2) {
+
+    // Reduplication error in ninth local square
+    m_inputFile = "../../inputs/error_invalid_square_loc_sq_input_2.txt";
+    ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
+
+    int status;
+
+    // Read file
+    status = m_sr.readFile(m_fin);
+    ASSERT_EQ(status, SudokuReader::NoError);
+
+    // Validate current square state
+    status = m_sr.isValid();
+    ASSERT_FALSE(status);
+}

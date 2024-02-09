@@ -12,6 +12,8 @@
 using namespace std;
 
 const int    SudokuReader::Dimension  = 9;
+const int    SudokuReader::NumLocalSq = SudokuReader::Dimension;
+const int    SudokuReader::LocalSqDim = 3;
 const string SudokuReader::DotSeparator     = ".";
 const string SudokuReader::XSeparator       = "x";
 
@@ -47,7 +49,6 @@ int SudokuReader::isValid(void)
 
         for ( int row = 0 ; row < SudokuReader::Dimension ; row++ )
         {
-            
             if ( ( square[row][col] != 0 )   &&
                  ( v[ square[row][col] ]++ )    )
             {
@@ -62,18 +63,45 @@ int SudokuReader::isValid(void)
     // Check for duplication in the rows
     for ( int row = 0 ; row < SudokuReader::Dimension ; row++ )
     {
-        vector<int> v(SudokuReader::Dimension, 0);
+        vector<int> h(SudokuReader::Dimension, 0);
 
         for ( int col = 0 ; col < SudokuReader::Dimension ; col++ )
         {
-            
             if ( ( square[row][col] != 0 )   &&
-                 ( v[ square[row][col] ]++ )    )
+                 ( h[ square[row][col] ]++ )    )
             {
                 isSquareValid   = false;
                 retStatus       = false;
                 // cerr << "Found duplicate entry at row " << row+1 << ", col " << col+1 << ".\n";
                 goto cleanup;
+            }
+        }
+    }
+
+    // Check for duplication in each local squre, local squares are labelled as:
+    // Square Numbers : 0 1 2        Starting at : 0,0 0,3 0,6
+    //                  3 4 5                      3,0 3,3 3,6
+    //                  6 7 8                      6,0 6,3 6,6 
+    // 0 1 2 3 4 5 6 7 8 LocSqNum   == n
+    // 0 0 0 3 3 3 6 6 6 Row        == 3 * ( n / 3 )
+    // 0 3 6 0 3 6 0 3 6 Col        == 3 * ( n % 3 )
+    for ( int locsq = 0 ; locsq < SudokuReader::NumLocalSq ; locsq++ )
+    {
+        vector<int>     sq(SudokuReader::Dimension, 0);
+        int             rstart = 3 * (locsq / LocalSqDim);
+        for ( int row = rstart ; row < rstart + SudokuReader::LocalSqDim ; row++ )
+        {
+            int             cstart = 3 * (locsq % LocalSqDim);
+            for ( int col = cstart ; col < cstart + SudokuReader::LocalSqDim ; col++ )
+            {
+                if ( ( square[row][col] != 0 )   &&
+                     ( sq[ square[row][col] ]++ )    )
+                {
+                    isSquareValid   = false;
+                    retStatus       = false;
+                    //cerr << "Found duplicate entry at row " << row+1 << ", col " << col+1 << ".\n";
+                    goto cleanup;
+                }
             }
         }
     }
