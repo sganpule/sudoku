@@ -15,14 +15,100 @@ const int    SudokuReader::Dimension  = 9;
 const string SudokuReader::DotSeparator     = ".";
 const string SudokuReader::XSeparator       = "x";
 
+int static getNextInput(fstream& is, int& retVal);
+
 
 SudokuReader::SudokuReader() 
-             :inSquareValid(false)
+             :isSquareValid(true)
 {
     // Resize sudoku square storage to SudokuReader::Dimension x SudokuReader::Dimension
-    inSquare.resize( SudokuReader::Dimension, vector<int>(SudokuReader::Dimension) );
-    assert(SudokuReader::Dimension == inSquare.size());
-    assert(SudokuReader::Dimension == inSquare[0].size());
+    square.resize( SudokuReader::Dimension, vector<int>(SudokuReader::Dimension) );
+    assert(SudokuReader::Dimension == square.size());
+    assert(SudokuReader::Dimension == square[0].size());
+
+    for ( int i = 0 ; i < SudokuReader::Dimension ; i++ )
+    {
+        for ( int j = 0 ; j < SudokuReader::Dimension ; j++ )
+        {
+            square[i][j] = 0;
+        }
+    }
+
+}
+
+int SudokuReader::isValid(void)
+{
+    int         retStatus = true;
+
+    // Check for duplication in the columns
+    for ( int col = 0 ; col < SudokuReader::Dimension ; col++ )
+    {
+        vector<int> v(SudokuReader::Dimension, 0);
+
+        for ( int row = 0 ; row < SudokuReader::Dimension ; row++ )
+        {
+            
+            if ( ( square[row][col] != 0 )   &&
+                 ( v[ square[row][col] ]++ )    )
+            {
+                isSquareValid   = false;
+                retStatus       = false;
+                // cerr << "Found duplicate entry at row " << row+1 << ", col " << col+1 << ".\n";
+                goto cleanup;
+            }
+        }
+    }
+
+    // Check for duplication in the rows
+    for ( int row = 0 ; row < SudokuReader::Dimension ; row++ )
+    {
+        vector<int> v(SudokuReader::Dimension, 0);
+
+        for ( int col = 0 ; col < SudokuReader::Dimension ; col++ )
+        {
+            
+            if ( ( square[row][col] != 0 )   &&
+                 ( v[ square[row][col] ]++ )    )
+            {
+                isSquareValid   = false;
+                retStatus       = false;
+                // cerr << "Found duplicate entry at row " << row+1 << ", col " << col+1 << ".\n";
+                goto cleanup;
+            }
+        }
+    }
+
+cleanup:
+    return retStatus;
+
+}
+
+
+int SudokuReader::readFile(fstream& is)
+{
+    string  cin;
+    int     status = 0;
+    int     retVal;
+
+    for ( int row = 0 ; row < SudokuReader::Dimension ; row++ )
+    {
+        for ( int col = 0 ; col < SudokuReader::Dimension ; col++ )
+        {
+            status = getNextInput(is, retVal);
+            if (SudokuReader::NoError == status)
+            {
+                square[row][col] = retVal;
+            }
+            else
+            {
+                // cout << "Found read in issue " << status << " at location " << i << ", " << j << ".\n";
+                goto cleanup;
+            }
+        }
+    }
+
+cleanup:
+    return status;
 }
 
 int static getNextInput(fstream& is, int& retVal)
@@ -70,31 +156,5 @@ int static getNextInput(fstream& is, int& retVal)
 
     }
 
-    return status;
-}
-int SudokuReader::readFile(fstream& is)
-{
-    string  cin;
-    int     status = 0;
-    int     retVal;
-
-    for ( int i = 0 ; i < SudokuReader::Dimension ; i++ )
-    {
-        for ( int j = 0 ; j < SudokuReader::Dimension ; j++ )
-        {
-            status = getNextInput(is, retVal);
-            if (SudokuReader::NoError == status)
-            {
-                inSquare[i][j] = retVal;
-            }
-            else
-            {
-                // cout << "Found read in issue " << status << " at location " << i << ", " << j << ".\n";
-                goto cleanup;
-            }
-        }
-    }
-
-cleanup:
     return status;
 }

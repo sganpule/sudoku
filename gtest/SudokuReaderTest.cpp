@@ -46,19 +46,6 @@ class SudokuReaderTest : public testing::Test {
 
 
 
-// Demonstrate some basic assertions.
-TEST_F(SudokuReaderTest, BasicAssertions) {
-
-    // Expect two strings not to be equal.
-    EXPECT_STRNE("hello", "world");
-    EXPECT_EQ(12, 11+1);
-    EXPECT_FALSE(34 == 34+1);
-    EXPECT_TRUE(23 == 22+1);
-    EXPECT_GT(45, 45-1);
-    EXPECT_LT(45, 45+1);
-
-}
-
 int openInputFile(fstream& fin, string& inputFileName)
 {
     int returnVal = 0;
@@ -76,7 +63,7 @@ int openInputFile(fstream& fin, string& inputFileName)
 }
 
 
-// Tests against the sudoku_lib.
+// Tests against the SudokuReade file input.
 
 TEST_F(SudokuReaderTest, HappyPath) {
 
@@ -146,4 +133,55 @@ TEST_F(SudokuReaderTest, NonNumericEntry3) {
     // Read file
     int status = m_sr.readFile(m_fin);
     ASSERT_EQ(status, SudokuReader::FoundEntryThatIsNotADigit);
+}
+
+
+
+// Test against input validation
+
+TEST_F(SudokuReaderTest, ValidateUninitializedInput) {
+
+    // Expect two strings not to be equal.
+    EXPECT_STRNE("hello", "world");
+    EXPECT_EQ(12, 11+1);
+    EXPECT_FALSE(34 == 34+1);
+    EXPECT_TRUE(23 == 22+1);
+    EXPECT_GT(45, 45-1);
+    EXPECT_LT(45, 45+1);
+
+    // Validate current square state
+    bool status = m_sr.isValid();
+    ASSERT_TRUE(status);
+}
+
+TEST_F(SudokuReaderTest, ValidateErrorVertInput) {
+
+    m_inputFile = "../../inputs/error_invalid_square_vert_input.txt";
+    ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
+
+    int status;
+
+    // Read file
+    status = m_sr.readFile(m_fin);
+    ASSERT_EQ(status, SudokuReader::NoError);
+
+    // Validate current square state
+    status = m_sr.isValid();
+    ASSERT_FALSE(status);
+}
+
+TEST_F(SudokuReaderTest, ValidateErrorHorzInput) {
+
+    m_inputFile = "../../inputs/error_invalid_square_horz_input.txt";
+    ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
+
+    int status;
+
+    // Read file
+    status = m_sr.readFile(m_fin);
+    ASSERT_EQ(status, SudokuReader::NoError);
+
+    // Validate current square state
+    status = m_sr.isValid();
+    ASSERT_FALSE(status);
 }

@@ -16,6 +16,7 @@ public:
     SudokuReader();
     
     int readFile(fstream& is);
+    int isValid();
 
     enum
     {
@@ -31,8 +32,8 @@ public:
 
 private:
 
-    bool                    inSquareValid;
-    vector< vector<int> >   inSquare;
+    bool                    isSquareValid;
+    vector< vector<int> >   square;
 
     int validateInput();
 
