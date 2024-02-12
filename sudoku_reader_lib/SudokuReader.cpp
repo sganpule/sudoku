@@ -74,10 +74,10 @@ int SudokuReader::isValid(int* error_row, int* error_col)
             if ( ( square[row][col] != 0 )   &&
                  ( h[ square[row][col] ]++ )    )
             {
-                isSquareValid   = false;
-                retStatus       = SudokuReader::FoundDuplicateEntryRow;
                 retRow = row;
                 retCol = col;
+                isSquareValid   = false;
+                retStatus       = SudokuReader::FoundDuplicateEntryRow;
 //              cerr << "Found duplicate entry at row " << row+1 << ", col " << col+1 << ".\n";
                 goto cleanup;
             }
