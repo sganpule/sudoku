@@ -45,9 +45,10 @@ int SudokuReader::isValid(int* error_row, int* error_col)
     int         retRow, retCol;
 
     // Check for duplication in the columns
-    if (SudokuReader::NoError == retStatus)
     for ( int col = 0 ; col < SudokuReader::Dimension ; col++ )
     {
+        if (SudokuReader::NoError != retStatus) break;
+
         vector<int> v(SudokuReader::Dimension, 0);
 
         for ( int row = 0 ; row < SudokuReader::Dimension ; row++ )
@@ -60,7 +61,7 @@ int SudokuReader::isValid(int* error_row, int* error_col)
                 retRow = row;
                 retCol = col;
                 cerr << "Found column duplicate entry at row " << row+1 << ", col " << col+1 << ".\n";
-                goto cleanup;
+                break;
             }
         }
     }
@@ -69,6 +70,8 @@ int SudokuReader::isValid(int* error_row, int* error_col)
     if (SudokuReader::NoError == retStatus)
     for ( int row = 0 ; row < SudokuReader::Dimension ; row++ )
     {
+        if (SudokuReader::NoError != retStatus) break;
+
         vector<int> h(SudokuReader::Dimension, 0);
 
         for ( int col = 0 ; col < SudokuReader::Dimension ; col++ )
@@ -81,7 +84,7 @@ int SudokuReader::isValid(int* error_row, int* error_col)
                 isSquareValid   = false;
                 retStatus       = SudokuReader::FoundDuplicateEntryRow;
                 cerr << "Found row duplicate entry at row " << row+1 << ", col " << col+1 << ".\n";
-                goto cleanup;
+                break;
             }
         }
     }
@@ -96,6 +99,8 @@ int SudokuReader::isValid(int* error_row, int* error_col)
     if (SudokuReader::NoError == retStatus)
     for ( int locsq = 0 ; locsq < SudokuReader::NumLocalSq ; locsq++ )
     {
+        if (SudokuReader::NoError != retStatus) break;
+
         vector<int>     sq(SudokuReader::Dimension, 0);
         int             rstart = 3 * (locsq / LocalSqDim);
         for ( int row = rstart ; row < rstart + SudokuReader::LocalSqDim ; row++ )
@@ -111,7 +116,7 @@ int SudokuReader::isValid(int* error_row, int* error_col)
                     retRow = row;
                     retCol = col;
                     cerr << "Found loc sq duplicate entry at row " << row+1 << ", col " << col+1 << ".\n";
-                    goto cleanup;
+                    break;
                 }
             }
         }
