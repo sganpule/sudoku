@@ -38,9 +38,11 @@ SudokuReader::SudokuReader()
 
 }
 
-int SudokuReader::isValid(void)
+int SudokuReader::isValid(int* error_row, int* error_col)
 {
-    int         retStatus = true;
+    int         retStatus = SudokuReader::NoError;
+    int         row, col;
+    int         retRow, retCol;
 
     // Check for duplication in the columns
     for ( int col = 0 ; col < SudokuReader::Dimension ; col++ )
@@ -53,8 +55,10 @@ int SudokuReader::isValid(void)
                  ( v[ square[row][col] ]++ )    )
             {
                 isSquareValid   = false;
-                retStatus       = false;
-                // cerr << "Found duplicate entry at row " << row+1 << ", col " << col+1 << ".\n";
+                retStatus       = SudokuReader::FoundDuplicateEntryCol;
+                retRow = row;
+                retCol = col;
+//              cerr << "Found duplicate entry at row " << row+1 << ", col " << col+1 << ".\n";
                 goto cleanup;
             }
         }
@@ -71,8 +75,10 @@ int SudokuReader::isValid(void)
                  ( h[ square[row][col] ]++ )    )
             {
                 isSquareValid   = false;
-                retStatus       = false;
-                // cerr << "Found duplicate entry at row " << row+1 << ", col " << col+1 << ".\n";
+                retStatus       = SudokuReader::FoundDuplicateEntryRow;
+                retRow = row;
+                retCol = col;
+//              cerr << "Found duplicate entry at row " << row+1 << ", col " << col+1 << ".\n";
                 goto cleanup;
             }
         }
@@ -98,8 +104,10 @@ int SudokuReader::isValid(void)
                      ( sq[ square[row][col] ]++ )    )
                 {
                     isSquareValid   = false;
-                    retStatus       = false;
-                    //cerr << "Found duplicate entry at row " << row+1 << ", col " << col+1 << ".\n";
+                    retStatus       = SudokuReader::FoundDuplicateEntryLocSq;
+                    retRow = row;
+                    retCol = col;
+//                  cerr << "Found duplicate entry at row " << row+1 << ", col " << col+1 << ".\n";
                     goto cleanup;
                 }
             }
@@ -107,6 +115,12 @@ int SudokuReader::isValid(void)
     }
 
 cleanup:
+    if (retStatus != SudokuReader::NoError)
+    {
+        if (error_row) *error_row = retRow;
+        if (error_col) *error_col = retCol;
+    }
+
     return retStatus;
 
 }

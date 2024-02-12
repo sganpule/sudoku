@@ -16,14 +16,17 @@ public:
     SudokuReader();
     
     int readFile(fstream& is);
-    int isValid();
+    int isValid(int* error_row = NULL, int *error_col = NULL);
 
     enum
     {
         NoError,
         FoundEntryLongerThanSingleChar,
         FoundEntryThatIsNotADigit,
-        FoundInvalidSeparator
+        FoundInvalidSeparator,
+        FoundDuplicateEntryRow,
+        FoundDuplicateEntryCol,
+        FoundDuplicateEntryLocSq 
     } SudokuReaderErrorValues;
 
     static const int    NumLocalSq;

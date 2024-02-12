@@ -150,8 +150,8 @@ TEST_F(SudokuReaderTest, ValidateUninitializedInput) {
     EXPECT_LT(45, 45+1);
 
     // Validate current square state
-    bool status = m_sr.isValid();
-    ASSERT_TRUE(status);
+    int status = m_sr.isValid();
+    ASSERT_EQ(status, SudokuReader::NoError);
 }
 
 TEST_F(SudokuReaderTest, ValidateErrorVertInput) {
@@ -167,7 +167,26 @@ TEST_F(SudokuReaderTest, ValidateErrorVertInput) {
 
     // Validate current square state
     status = m_sr.isValid();
-    ASSERT_FALSE(status);
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryCol);
+
+    // Validate current square state
+    int err_row, err_col;
+    status = m_sr.isValid(&err_row, &err_col);
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryCol);
+    ASSERT_EQ(err_row, 3);
+    ASSERT_EQ(err_col, 1);
+
+    // Validate current square state, clear err_row, send null col
+    err_row = 0;
+    status = m_sr.isValid(&err_row, 0);
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryCol);
+    ASSERT_EQ(err_row, 3);
+
+    // Validate current square state, clear err_col, send null row
+    err_col = 0;
+    status = m_sr.isValid(0,         &err_col);
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryCol);
+    ASSERT_EQ(err_col, 1);
 }
 
 TEST_F(SudokuReaderTest, ValidateErrorHorzInput) {
@@ -183,7 +202,26 @@ TEST_F(SudokuReaderTest, ValidateErrorHorzInput) {
 
     // Validate current square state
     status = m_sr.isValid();
-    ASSERT_FALSE(status);
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryRow);
+
+    // Validate current square state, check return locations
+    int err_row, err_col;
+    status = m_sr.isValid(&err_row, &err_col);
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryRow);
+    ASSERT_EQ(err_row, 2);
+    ASSERT_EQ(err_col, 5);
+
+    // Validate current square state, clear err_row, send null col
+    err_row = 0;
+    status = m_sr.isValid(&err_row, 0);
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryRow);
+    ASSERT_EQ(err_row, 2);
+
+    // Validate current square state, clear err_col, send null row
+    err_col = 0;
+    status = m_sr.isValid(0,         &err_col);
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryRow);
+    ASSERT_EQ(err_col, 5);
 }
 
 
@@ -201,7 +239,26 @@ TEST_F(SudokuReaderTest, ValidateErrorLocSqInput1) {
 
     // Validate current square state
     status = m_sr.isValid();
-    ASSERT_FALSE(status);
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryLocSq);
+
+    // Validate current square state, check return locations
+    int err_row, err_col;
+    status = m_sr.isValid(&err_row, &err_col);
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryLocSq);
+    ASSERT_EQ(err_row, 2);
+    ASSERT_EQ(err_col, 2);
+
+    // Validate current square state, clear err_row, send null col
+    err_row = 0;
+    status = m_sr.isValid(&err_row, 0);
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryLocSq);
+    ASSERT_EQ(err_row, 2);
+
+    // Validate current square state, clear err_col, send null row
+    err_col = 0;
+    status = m_sr.isValid(0,         &err_col);
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryLocSq);
+    ASSERT_EQ(err_col, 2);
 }
 
 TEST_F(SudokuReaderTest, ValidateErrorLocSqInput2) {
@@ -218,5 +275,24 @@ TEST_F(SudokuReaderTest, ValidateErrorLocSqInput2) {
 
     // Validate current square state
     status = m_sr.isValid();
-    ASSERT_FALSE(status);
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryLocSq);
+
+    // Validate current square state, check return locations
+    int err_row, err_col;
+    status = m_sr.isValid(&err_row, &err_col);
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryLocSq);
+    ASSERT_EQ(err_row, 8);
+    ASSERT_EQ(err_col, 8);
+
+    // Validate current square state, clear err_row, send null col
+    err_row = 0;
+    status = m_sr.isValid(&err_row, 0);
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryLocSq);
+    ASSERT_EQ(err_row, 8);
+
+    // Validate current square state, clear err_col, send null row
+    err_col = 0;
+    status = m_sr.isValid(0,         &err_col);
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryLocSq);
+    ASSERT_EQ(err_col, 8);
 }
