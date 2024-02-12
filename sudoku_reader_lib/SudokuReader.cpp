@@ -45,6 +45,7 @@ int SudokuReader::isValid(int* error_row, int* error_col)
     int         retRow, retCol;
 
     // Check for duplication in the columns
+    if (SudokuReader::NoError == retStatus)
     for ( int col = 0 ; col < SudokuReader::Dimension ; col++ )
     {
         vector<int> v(SudokuReader::Dimension, 0);
@@ -65,6 +66,7 @@ int SudokuReader::isValid(int* error_row, int* error_col)
     }
 
     // Check for duplication in the rows
+    if (SudokuReader::NoError == retStatus)
     for ( int row = 0 ; row < SudokuReader::Dimension ; row++ )
     {
         vector<int> h(SudokuReader::Dimension, 0);
@@ -91,6 +93,7 @@ int SudokuReader::isValid(int* error_row, int* error_col)
     // 0 1 2 3 4 5 6 7 8 LocSqNum   == n
     // 0 0 0 3 3 3 6 6 6 Row        == 3 * ( n / 3 )
     // 0 3 6 0 3 6 0 3 6 Col        == 3 * ( n % 3 )
+    if (SudokuReader::NoError == retStatus)
     for ( int locsq = 0 ; locsq < SudokuReader::NumLocalSq ; locsq++ )
     {
         vector<int>     sq(SudokuReader::Dimension, 0);
