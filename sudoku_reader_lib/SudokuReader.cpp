@@ -58,7 +58,7 @@ int SudokuReader::isValid(int* error_row, int* error_col)
                 retStatus       = SudokuReader::FoundDuplicateEntryCol;
                 retRow = row;
                 retCol = col;
-//              cerr << "Found duplicate entry at row " << row+1 << ", col " << col+1 << ".\n";
+                cerr << "Found column duplicate entry at row " << row+1 << ", col " << col+1 << ".\n";
                 goto cleanup;
             }
         }
@@ -78,7 +78,7 @@ int SudokuReader::isValid(int* error_row, int* error_col)
                 retCol = col;
                 isSquareValid   = false;
                 retStatus       = SudokuReader::FoundDuplicateEntryRow;
-//              cerr << "Found duplicate entry at row " << row+1 << ", col " << col+1 << ".\n";
+                cerr << "Found row duplicate entry at row " << row+1 << ", col " << col+1 << ".\n";
                 goto cleanup;
             }
         }
@@ -107,7 +107,7 @@ int SudokuReader::isValid(int* error_row, int* error_col)
                     retStatus       = SudokuReader::FoundDuplicateEntryLocSq;
                     retRow = row;
                     retCol = col;
-//                  cerr << "Found duplicate entry at row " << row+1 << ", col " << col+1 << ".\n";
+                    cerr << "Found loc sq duplicate entry at row " << row+1 << ", col " << col+1 << ".\n";
                     goto cleanup;
                 }
             }
