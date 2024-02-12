@@ -24,7 +24,7 @@ public:
         FoundEntryLongerThanSingleChar,
         FoundEntryThatIsNotADigit,
         FoundInvalidSeparator,
-        FoundDuplicateEntryRow,
+        FoundDuplicateEntryRow = 40,
         FoundDuplicateEntryCol,
         FoundDuplicateEntryLocSq 
     } SudokuReaderErrorValues;
