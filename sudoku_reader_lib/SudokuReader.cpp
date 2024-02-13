@@ -47,7 +47,8 @@ int SudokuReader::isValid(int* error_row, int* error_col)
     // Check for duplication in the columns
     for ( int col = 0 ; col < SudokuReader::Dimension ; col++ )
     {
-        vector<int> v(SudokuReader::Dimension, 0);
+        // Track which numbers we see, +1 to allow for indexing from 1-9
+        vector<int> v(SudokuReader::Dimension+1, 0);
 
         for ( int row = 0 ; row < SudokuReader::Dimension ; row++ )
         {
@@ -67,7 +68,8 @@ int SudokuReader::isValid(int* error_row, int* error_col)
     // Check for duplication in the rows
     for ( int row = 0 ; row < SudokuReader::Dimension ; row++ )
     {
-        vector<int> h(SudokuReader::Dimension, 0);
+        // Track which numbers we see, +1 to allow for indexing from 1-9
+        vector<int> h(SudokuReader::Dimension+1, 0);
 
         for ( int col = 0 ; col < SudokuReader::Dimension ; col++ )
         {
@@ -93,7 +95,8 @@ int SudokuReader::isValid(int* error_row, int* error_col)
     // 0 3 6 0 3 6 0 3 6 Col        == 3 * ( n % 3 )
     for ( int locsq = 0 ; locsq < SudokuReader::NumLocalSq ; locsq++ )
     {
-        vector<int>     sq(SudokuReader::Dimension, 0);
+        // Track which numbers we see, +1 to allow for indexing from 1-9
+        vector<int>     sq(SudokuReader::Dimension+1, 0);
         int             rstart = 3 * (locsq / LocalSqDim);
         for ( int row = rstart ; row < rstart + SudokuReader::LocalSqDim ; row++ )
         {
