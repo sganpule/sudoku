@@ -42,47 +42,45 @@ int SudokuReader::isValid(int* error_row, int* error_col)
 {
     int         retStatus = SudokuReader::NoError;
     int         row, col;
-    int         retRow, retCol;
 
     // Check for duplication in the columns
-    for ( int col = 0 ; col < SudokuReader::Dimension ; col++ )
+    for ( col = 0 ; col < SudokuReader::Dimension ; col++ )
     {
         // Track which numbers we see, +1 to allow for indexing from 1-9
         vector<int> v(SudokuReader::Dimension+1, 0);
 
-        for ( int row = 0 ; row < SudokuReader::Dimension ; row++ )
+        for ( row = 0 ; row < SudokuReader::Dimension ; row++ )
         {
+            assert(square[row][col] <= SudokuReader::Dimension);
+
             if ( ( square[row][col] != 0 )   &&
                  ( v[ square[row][col] ]++ )    )
             {
                 isSquareValid   = false;
                 retStatus       = SudokuReader::FoundDuplicateEntryCol;
-                retRow = row;
-                retCol = col;
-                cerr << "Found column duplicate entry at row " << row+1 << ", col " << col+1 << ".\n";
-                break;
+//              cerr << "Found column duplicate entry at row " << row+1 << ", col " << col+1 << ".\n";
+                goto cleanup;
             }
         }
     }
 
     // Check for duplication in the rows
-    if (SudokuReader::NoError == retStatus)
-    for ( int row = 0 ; row < SudokuReader::Dimension ; row++ )
+    for ( row = 0 ; row < SudokuReader::Dimension ; row++ )
     {
         // Track which numbers we see, +1 to allow for indexing from 1-9
         vector<int> h(SudokuReader::Dimension+1, 0);
 
-        for ( int col = 0 ; col < SudokuReader::Dimension ; col++ )
+        for ( col = 0 ; col < SudokuReader::Dimension ; col++ )
         {
+            assert(square[row][col] <= SudokuReader::Dimension);
+
             if ( ( square[row][col] != 0 )   &&
                  ( h[ square[row][col] ]++ )    )
             {
-                retRow = row;
-                retCol = col;
                 isSquareValid   = false;
                 retStatus       = SudokuReader::FoundDuplicateEntryRow;
-                cerr << "Found row duplicate entry at row " << row+1 << ", col " << col+1 << ".\n";
-                break;
+//              cerr << "Found row duplicate entry at row " << row+1 << ", col " << col+1 << ".\n";
+                goto cleanup;
             }
         }
     }
@@ -94,26 +92,25 @@ int SudokuReader::isValid(int* error_row, int* error_col)
     // 0 1 2 3 4 5 6 7 8 LocSqNum   == n
     // 0 0 0 3 3 3 6 6 6 Row        == 3 * ( n / 3 )
     // 0 3 6 0 3 6 0 3 6 Col        == 3 * ( n % 3 )
-    if (SudokuReader::NoError == retStatus)
     for ( int locsq = 0 ; locsq < SudokuReader::NumLocalSq ; locsq++ )
     {
         // Track which numbers we see, +1 to allow for indexing from 1-9
         vector<int>     sq(SudokuReader::Dimension+1, 0);
         int             rstart = 3 * (locsq / LocalSqDim);
-        for ( int row = rstart ; row < rstart + SudokuReader::LocalSqDim ; row++ )
+        for ( row = rstart ; row < rstart + SudokuReader::LocalSqDim ; row++ )
         {
-            int             cstart = 3 * (locsq % LocalSqDim);
-            for ( int col = cstart ; col < cstart + SudokuReader::LocalSqDim ; col++ )
+            int         cstart = 3 * (locsq % LocalSqDim);
+            for ( col = cstart ; col < cstart + SudokuReader::LocalSqDim ; col++ )
             {
+                assert(square[row][col] <= SudokuReader::Dimension);
+
                 if ( ( square[row][col] != 0 )   &&
                      ( sq[ square[row][col] ]++ )    )
                 {
                     isSquareValid   = false;
                     retStatus       = SudokuReader::FoundDuplicateEntryLocSq;
-                    retRow = row;
-                    retCol = col;
-                    cerr << "Found loc sq duplicate entry at row " << row+1 << ", col " << col+1 << ".\n";
-                    break;
+//                  cerr << "Found loc sq duplicate entry at row " << row+1 << ", col " << col+1 << ".\n";
+                    goto cleanup;
                 }
             }
         }
@@ -122,8 +119,8 @@ int SudokuReader::isValid(int* error_row, int* error_col)
 cleanup:
     if (retStatus != SudokuReader::NoError)
     {
-        if (error_row) *error_row = retRow;
-        if (error_col) *error_col = retCol;
+        if (error_row) *error_row = row;
+        if (error_col) *error_col = col;
     }
 
     return retStatus;
@@ -205,3 +202,22 @@ int static getNextInput(fstream& is, int& retVal)
 
     return status;
 }
+
+
+ostream& operator<<(ostream& os, SudokuReader sr)
+{
+    for ( int row = 0 ; row < SudokuReader::Dimension ; row++ )
+    {
+        // Track which numbers we see, +1 to allow for indexing from 1-9
+        vector<int> h(SudokuReader::Dimension+1, 0);
+
+        for ( int col = 0 ; col < SudokuReader::Dimension ; col++ )
+        {
+            cout << sr.square[row][col] << " ";
+        }
+        cout << endl;
+    }
+
+    return os;
+}
+

@@ -63,8 +63,7 @@ int main(int argc, char* argv[])
         cerr << "Error: Found input error at row " << error_row+1 << ", col " << error_col+1 << ".\n";
     }
 
-
-    
+    cout << "This is what we're working on:\n" << reader;
 }
 
 

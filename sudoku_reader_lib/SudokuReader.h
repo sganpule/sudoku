@@ -18,6 +18,8 @@ public:
     int readFile(fstream& is);
     int isValid(int* error_row = NULL, int *error_col = NULL);
 
+    friend ostream& operator<<(ostream& os, SudokuReader sr);
+
     enum
     {
         NoError,
