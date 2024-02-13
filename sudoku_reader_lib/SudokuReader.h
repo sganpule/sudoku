@@ -7,8 +7,6 @@
 
 using namespace std;
 
-int sudokuRead(fstream& is, vector<vector<int>> *square);
-
 
 class SudokuReader
 {
@@ -18,23 +16,29 @@ public:
     SudokuReader();
     
     int readFile(fstream& is);
+    int isValid(int* error_row = NULL, int *error_col = NULL);
 
     enum
     {
         NoError,
         FoundEntryLongerThanSingleChar,
         FoundEntryThatIsNotADigit,
-        FoundInvalidSeparator
+        FoundInvalidSeparator,
+        FoundDuplicateEntryRow = 40,
+        FoundDuplicateEntryCol,
+        FoundDuplicateEntryLocSq 
     } SudokuReaderErrorValues;
 
+    static const int    NumLocalSq;
+    static const int    LocalSqDim;
     static const int    Dimension;
     static const string DotSeparator;
     static const string XSeparator;
 
 private:
 
-    bool                    inSquareValid;
-    vector< vector<int> >   inSquare;
+    bool                    isSquareValid;
+    vector< vector<int> >   square;
 
     int validateInput();
 

@@ -46,19 +46,6 @@ class SudokuReaderTest : public testing::Test {
 
 
 
-// Demonstrate some basic assertions.
-TEST_F(SudokuReaderTest, BasicAssertions) {
-
-    // Expect two strings not to be equal.
-    EXPECT_STRNE("hello", "world");
-    EXPECT_EQ(12, 11+1);
-    EXPECT_FALSE(34 == 34+1);
-    EXPECT_TRUE(23 == 22+1);
-    EXPECT_GT(45, 45-1);
-    EXPECT_LT(45, 45+1);
-
-}
-
 int openInputFile(fstream& fin, string& inputFileName)
 {
     int returnVal = 0;
@@ -76,7 +63,7 @@ int openInputFile(fstream& fin, string& inputFileName)
 }
 
 
-// Tests against the sudoku_lib.
+// Tests against the SudokuReade file input.
 
 TEST_F(SudokuReaderTest, HappyPath) {
 
@@ -146,4 +133,166 @@ TEST_F(SudokuReaderTest, NonNumericEntry3) {
     // Read file
     int status = m_sr.readFile(m_fin);
     ASSERT_EQ(status, SudokuReader::FoundEntryThatIsNotADigit);
+}
+
+
+
+// Test against input validation
+
+TEST_F(SudokuReaderTest, ValidateUninitializedInput) {
+
+    // Expect two strings not to be equal.
+    EXPECT_STRNE("hello", "world");
+    EXPECT_EQ(12, 11+1);
+    EXPECT_FALSE(34 == 34+1);
+    EXPECT_TRUE(23 == 22+1);
+    EXPECT_GT(45, 45-1);
+    EXPECT_LT(45, 45+1);
+
+    // Validate current square state
+    int status = m_sr.isValid();
+    ASSERT_EQ(status, SudokuReader::NoError);
+}
+
+TEST_F(SudokuReaderTest, ValidateErrorVertInput) {
+
+    m_inputFile = "../../inputs/error_invalid_square_vert_input.txt";
+    ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
+
+    int status;
+
+    // Read file
+    status = m_sr.readFile(m_fin);
+    ASSERT_EQ(status, SudokuReader::NoError);
+
+    // Validate current square state
+    status = m_sr.isValid();
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryCol);
+
+    // Validate current square state
+    int err_row, err_col;
+    status = m_sr.isValid(&err_row, &err_col);
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryCol);
+    ASSERT_EQ(err_row, 3);
+    ASSERT_EQ(err_col, 1);
+
+    // Validate current square state, clear err_row, send null col
+    err_row = 0;
+    status = m_sr.isValid(&err_row, 0);
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryCol);
+    ASSERT_EQ(err_row, 3);
+
+    // Validate current square state, clear err_col, send null row
+    err_col = 0;
+    status = m_sr.isValid(0,         &err_col);
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryCol);
+    ASSERT_EQ(err_col, 1);
+}
+
+TEST_F(SudokuReaderTest, ValidateErrorHorzInput) {
+
+    m_inputFile = "../../inputs/error_invalid_square_horz_input.txt";
+    ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
+
+    int status;
+
+    // Read file
+    status = m_sr.readFile(m_fin);
+    ASSERT_EQ(status, SudokuReader::NoError);
+
+    // Validate current square state
+    status = m_sr.isValid();
+    //ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryRow);
+
+    // Validate current square state, check return locations
+    int err_row, err_col;
+    status = m_sr.isValid(&err_row, &err_col);
+    //ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryRow);
+    ASSERT_EQ(err_row, 2);
+    ASSERT_EQ(err_col, 5);
+
+    // Validate current square state, clear err_row, send null col
+    err_row = 0;
+    status = m_sr.isValid(&err_row, 0);
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryRow);
+    ASSERT_EQ(err_row, 2);
+
+    // Validate current square state, clear err_col, send null row
+    err_col = 0;
+    status = m_sr.isValid(0,         &err_col);
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryRow);
+    ASSERT_EQ(err_col, 5);
+}
+
+
+TEST_F(SudokuReaderTest, ValidateErrorLocSqInput1) {
+
+    // Reduplication error in first local square
+    m_inputFile = "../../inputs/error_invalid_square_loc_sq_input_1.txt";
+    ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
+
+    int status;
+
+    // Read file
+    status = m_sr.readFile(m_fin);
+    ASSERT_EQ(status, SudokuReader::NoError);
+
+    // Validate current square state
+    status = m_sr.isValid();
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryLocSq);
+
+    // Validate current square state, check return locations
+    int err_row, err_col;
+    status = m_sr.isValid(&err_row, &err_col);
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryLocSq);
+    ASSERT_EQ(err_row, 2);
+    ASSERT_EQ(err_col, 2);
+
+    // Validate current square state, clear err_row, send null col
+    err_row = 0;
+    status = m_sr.isValid(&err_row, 0);
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryLocSq);
+    ASSERT_EQ(err_row, 2);
+
+    // Validate current square state, clear err_col, send null row
+    err_col = 0;
+    status = m_sr.isValid(0,         &err_col);
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryLocSq);
+    ASSERT_EQ(err_col, 2);
+}
+
+TEST_F(SudokuReaderTest, ValidateErrorLocSqInput2) {
+
+    // Reduplication error in ninth local square
+    m_inputFile = "../../inputs/error_invalid_square_loc_sq_input_2.txt";
+    ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
+
+    int status;
+
+    // Read file
+    status = m_sr.readFile(m_fin);
+    ASSERT_EQ(status, SudokuReader::NoError);
+
+    // Validate current square state
+    status = m_sr.isValid();
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryLocSq);
+
+    // Validate current square state, check return locations
+    int err_row, err_col;
+    status = m_sr.isValid(&err_row, &err_col);
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryLocSq);
+    ASSERT_EQ(err_row, 8);
+    ASSERT_EQ(err_col, 8);
+
+    // Validate current square state, clear err_row, send null col
+    err_row = 0;
+    status = m_sr.isValid(&err_row, 0);
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryLocSq);
+    ASSERT_EQ(err_row, 8);
+
+    // Validate current square state, clear err_col, send null row
+    err_col = 0;
+    status = m_sr.isValid(0,         &err_col);
+    ASSERT_EQ(status, SudokuReader::FoundDuplicateEntryLocSq);
+    ASSERT_EQ(err_col, 8);
 }
