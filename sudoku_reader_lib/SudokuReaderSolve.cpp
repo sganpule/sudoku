@@ -67,7 +67,7 @@ void SudokuReader::updatePossMatrix()
             }
             cout << endl;
         }
-/**/
+**/
     }
 }
 
