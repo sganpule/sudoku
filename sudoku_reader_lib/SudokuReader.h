@@ -46,8 +46,11 @@ public:
 
 private:
 
-    bool                    isSquareValid;
-    vector< vector<int> >   square;
+    bool                              isSquareValid;
+    vector< vector< int          > >  square;
+    vector< vector< vector <int> > >  poss;
+
+    void updatePossMatrix();
 
     int validateInput();
 

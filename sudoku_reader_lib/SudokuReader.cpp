@@ -24,18 +24,45 @@ SudokuReader::SudokuReader()
              :isSquareValid(true)
 {
     // Resize sudoku square storage to SudokuReader::Dimension x SudokuReader::Dimension
-    square.resize( SudokuReader::Dimension, vector<int>(SudokuReader::Dimension) );
-    assert(SudokuReader::Dimension == square.size());
-    assert(SudokuReader::Dimension == square[0].size());
+    square.resize( Dimension, vector<int>(Dimension) );
+    assert(Dimension == square.size());
+    assert(Dimension == square[0].size());
 
-    for ( int i = 0 ; i < SudokuReader::Dimension ; i++ )
+    for ( int i = 0 ; i < Dimension ; i++ )
     {
-        for ( int j = 0 ; j < SudokuReader::Dimension ; j++ )
+        for ( int j = 0 ; j < Dimension ; j++ )
         {
             square[i][j] = 0;
         }
     }
 
+    // Resize poss square storage. (Dimension x Dimension x Dimension)
+    poss.resize(Dimension);
+    for (int i = 0; i < Dimension; i++)
+    {
+        poss[i].resize(Dimension);
+
+        for (int j = 0; j < Dimension; j++)
+        {
+            // Need to add +1 to make indexing via square values easy
+            poss[i][j].resize(Dimension+1);
+        }
+    }
+
+    for ( int i = 0 ; i < Dimension ; i++ )
+    {
+        for ( int j = 0 ; j < Dimension ; j++ )
+        {
+            int fill = 0;
+            for ( auto k = poss[i][j].begin() ; k != poss[i][j].end() ; k++ )
+            {
+                // All values are possible at init time
+                // -- FYI, this could be '1', but using the element
+                //    to make it easier to read while debugging   
+                *k = fill++;
+            }
+        }
+    }
 }
 
 int SudokuReader::isValid(int* error_row, int* error_col)

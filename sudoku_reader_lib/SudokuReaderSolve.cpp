@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <algorithm>
 #include <assert.h>
 #include <ctype.h>
 
@@ -14,8 +15,62 @@ using namespace std;
 
 int SudokuReader::solve()
 {
+    //// Gen possibility matrix
+    updatePossMatrix();
+
     return CouldNotSolve;
 }
+
+void SudokuReader::updatePossMatrix()
+{
+    //// Gen possibility matrix
+
+    // Start on the columns
+    for ( int sq_col = 0 ; sq_col < SudokuReader::Dimension ; sq_col++ )
+    {
+        for ( int sq_row = 0 ; sq_row < SudokuReader::Dimension ; sq_row++ )
+        {
+            int thisElement = square[sq_row][sq_col];
+
+            // If the value for this element is known
+            if (thisElement)
+            {
+                // Clear all possibilities from this element's possibility list
+                std::fill(poss[sq_row][sq_col].begin(),
+                          poss[sq_row][sq_col].end(),
+                          0);
+
+                // Except for the actual value
+                // -- FYI, this could be '1', but using thisElement
+                //    to make it easier to read when debugging
+                poss[ sq_row ][ sq_col ][ thisElement ] = thisElement;
+
+                // Then, for each row element in this column
+                for ( int i = 0 ; i < Dimension ; i++ )
+                {
+                    // If the square is not set
+                    if (!square[i][sq_col])
+                    {
+                        // Remove 'thisElement' from [sq_col, i]'s possibility list
+                        poss[ i ][ sq_col ][ thisElement ] = 0;
+                    }
+                }
+            }
+        }
+/**
+        for ( int sq_row = 0 ; sq_row < SudokuReader::Dimension ; sq_row++ )
+        {
+            cout << "The possibility lists for column " << sq_col+1 << "..." << endl << "Row " << sq_row << ": ";
+            for ( int i = 0 ; i < Dimension ; i++ )
+            {
+                cout << poss[ sq_row ][ sq_col ][ i+1 ] << " ";
+            }
+            cout << endl;
+        }
+/**/
+    }
+}
+
 
 /*
 int SudokuReader::isValid(int* error_row, int* error_col)
