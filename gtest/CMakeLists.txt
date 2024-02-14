@@ -4,6 +4,7 @@ add_executable(
   hello_test
   SudokuTest.cpp
   SudokuReaderTest.cpp
+  SudokuReaderSolveTest.cpp
 )
 
 target_include_directories(hello_test PUBLIC

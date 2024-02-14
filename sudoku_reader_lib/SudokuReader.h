@@ -17,6 +17,7 @@ public:
     
     int readFile(fstream& is);
     int isValid(int* error_row = NULL, int *error_col = NULL);
+    int solve();
 
     friend ostream& operator<<(ostream& os, SudokuReader sr);
 
@@ -26,10 +27,16 @@ public:
         FoundEntryLongerThanSingleChar,
         FoundEntryThatIsNotADigit,
         FoundInvalidSeparator,
-        FoundDuplicateEntryRow = 40,
+        FoundDuplicateEntryRow,
         FoundDuplicateEntryCol,
         FoundDuplicateEntryLocSq 
     } SudokuReaderErrorValues;
+
+    enum
+    {
+        Solved,
+        CouldNotSolve
+    } SudokuReaderSolveReturnValues;
 
     static const int    NumLocalSq;
     static const int    LocalSqDim;
