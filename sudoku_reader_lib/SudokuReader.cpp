@@ -112,7 +112,7 @@ int SudokuReader::isValid(int* error_row, int* error_col)
         }
     }
 
-    // Check for duplication in each local squre, local squares are labelled as:
+    // Local squares are labelled as:
     // Square Numbers : 0 1 2        Starting at : 0,0 0,3 0,6
     //                  3 4 5                      3,0 3,3 3,6
     //                  6 7 8                      6,0 6,3 6,6 
@@ -122,8 +122,9 @@ int SudokuReader::isValid(int* error_row, int* error_col)
     for ( int locsq = 0 ; locsq < SudokuReader::NumLocalSq ; locsq++ )
     {
         // Track which numbers we see, +1 to allow for indexing from 1-9
-        vector<int>     sq(SudokuReader::Dimension+1, 0);
-        int             rstart = 3 * (locsq / LocalSqDim);
+        vector<int> sq(SudokuReader::Dimension+1, 0);
+
+        int         rstart = 3 * (locsq / LocalSqDim);
         for ( row = rstart ; row < rstart + SudokuReader::LocalSqDim ; row++ )
         {
             int         cstart = 3 * (locsq % LocalSqDim);
