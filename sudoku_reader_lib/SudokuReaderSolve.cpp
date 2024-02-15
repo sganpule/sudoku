@@ -24,8 +24,10 @@ int SudokuReader::solve()
 void SudokuReader::updatePossMatrix()
 {
     //// Gen possibility matrix
-#if(1)
-    // Start on the columns
+
+    // Start by going through each element in square,
+    // find the elements are known, clear their possibility lists,
+    // and set their values to exactly what they are known to be
     for ( int sq_col = 0 ; sq_col < Dimension ; sq_col++ )
     {
         for ( int sq_row = 0 ; sq_row < Dimension ; sq_row++ )
@@ -40,12 +42,25 @@ void SudokuReader::updatePossMatrix()
                           poss[sq_row][sq_col].end(),
                           0);
 
-                // Then, since we know this squre, set this one possibiilty
+                // Since we know this squre, set this one possibiilty
                 // -- FYI, this could be '1', but use 'thisElement'
                 //    to make it easier to read when debugging
                 poss[ sq_row ][ sq_col ][ thisElement ] = thisElement;
+            }
+        }
+    }
 
-                // Then, for each row element in this column
+    // Start on the columns
+    for ( int sq_col = 0 ; sq_col < Dimension ; sq_col++ )
+    {
+        for ( int sq_row = 0 ; sq_row < Dimension ; sq_row++ )
+        {
+            int thisElement = square[sq_row][sq_col];
+
+            // If the value for this element is known
+            if (thisElement)
+            {
+                // For each row element in this column
                 for ( int i = 0 ; i < Dimension ; i++ )
                 {
                     // If this square is not yet known...
@@ -69,9 +84,7 @@ void SudokuReader::updatePossMatrix()
         }
 **/
     }
-#endif
 
-#if(1)
     // Start on the rows
     for ( int sq_row = 0 ; sq_row < Dimension ; sq_row++ )
     {
@@ -97,7 +110,7 @@ void SudokuReader::updatePossMatrix()
 /**
         for ( int sq_col = 0 ; sq_col < SudokuReader::Dimension ; sq_col++ )
         {
-            cout << "The possibility lists for row " << sq_row+1 << "..." << endl << "Col " << sq_col+1 << ": ";
+          //cout << "The possibility lists for row " << sq_row+1 << "..." << endl << "Col " << sq_col+1 << ": ";
             for ( int i = 0 ; i < Dimension ; i++ )
             {
                 cout << poss[ sq_row ][ sq_col ][ i+1 ] << " ";
@@ -106,9 +119,8 @@ void SudokuReader::updatePossMatrix()
         }
 **/
     }
-#endif
 
-#if(0)
+
     // Local squares are labelled as:
     // Square Numbers : 0 1 2        Starting at : 0,0 0,3 0,6
     //                  3 4 5                      3,0 3,3 3,6
@@ -131,43 +143,34 @@ void SudokuReader::updatePossMatrix()
                 // If the value for this element is known
                 if (thisElement)
                 {
-                    // Clear all possibilities from this element's possibility list
-                    std::fill(poss[sq_row][sq_col].begin(),
-                              poss[sq_row][sq_col].end(),
-                              0);
-
-                    // Then, since we know this squre, set this one possibiilty
-                    // -- FYI, this could be '1', but use 'thisElement'
-                    //    to make it easier to read when debugging
-                    poss[ sq_row ][ sq_col ][ thisElement ] = thisElement;
-
-                    // Then, for each col element in this row
-                    // THIS NEEDS TO ADJUSTED FOR LOCAL SQUARES!!L!L!K!K(!!!*!**!*!*&&!)
-                    for ( int i = 0 ; i < Dimension ; i++ )
+                    // Then, search each element in this local square
+                    for ( int i = rstart ; i < rstart + LocalSqDim ; i++ )
                     {
-                        // If this square is not known...
-                        if (!square[sq_row][i])
+                        for ( int j = cstart ; j < cstart + LocalSqDim ; j++ )
                         {
-                            // Remove 'thisElement' from [sq_col, i]'s possibility list
-                            poss[ sq_row ][ i ][ thisElement ] = 0;
+                            // If this search square is not yet known...
+                            if (!square[i][j])
+                            {
+                                // Remove 'thisElement' from [j, i]'s possibility list
+                                poss[ i ][ j ][ thisElement ] = 0;
+                            }
                         }
                     }
                 }
             }
-    /**
+/**
             for ( int sq_col = 0 ; sq_col < SudokuReader::Dimension ; sq_col++ )
             {
-                cout << "The possibility lists for row " << sq_col+1 << "..." << endl << "Col " << sq_col << ": ";
+                cout << "The possibility lists for row " << sq_row+1 << "..." << endl << "Col " << sq_col+1 << ": ";
                 for ( int i = 0 ; i < Dimension ; i++ )
                 {
                     cout << poss[ sq_row ][ sq_col ][ i+1 ] << " ";
                 }
                 cout << endl;
             }
-    **/
+**/
         }
     }
-#endif
 
 }
 
