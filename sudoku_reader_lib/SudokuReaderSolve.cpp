@@ -15,18 +15,35 @@ using namespace std;
 
 int SudokuReader::solve()
 {
-    //// Gen possibility matrix
-    updatePossMatrix();
+    int squaresUpdated;
+
+    cout << "The orginal square...\n";
+    cout << *this << endl;
+
+    do
+    {
+        updatePossLists();
+        cout << "The updated possiblity matrix...\n";
+        printPoss();
+
+        squaresUpdated = updateSquare();
+        cout << "The updated square...\n";
+        cout << *this << endl;
+
+        cout << "Updated " << squaresUpdated << " squares!\n\n";
+
+    } while (squaresUpdated);
+    
 
     return CouldNotSolve;
 }
 
-void SudokuReader::updatePossMatrix()
+void SudokuReader::updatePossLists()
 {
     //// Gen possibility matrix
 
-    // Start by going through each element in square,
-    // find the elements are known, clear their possibility lists,
+    // Start by going through each element in 'square',
+    // find the elements that are known, clear their possibility lists,
     // and set their values to exactly what they are known to be
     for ( int sq_col = 0 ; sq_col < Dimension ; sq_col++ )
     {
@@ -174,3 +191,56 @@ void SudokuReader::updatePossMatrix()
 
 }
 
+void SudokuReader::printPoss()
+{
+    int numUpdated = 0;
+
+    // For each element in 'square'
+    for ( int row = 0 ; row < Dimension ; row++ )
+    {
+        for ( int col = 0 ; col < Dimension ; col++ )
+        {
+            // Find the number of elements that are non-zero
+            int num_poss = count_if(poss[row][col].begin(), 
+                                    poss[row][col].end(), 
+                                    [](int i) { return i!=0; } );
+
+            cout << num_poss << " ";
+        }
+        cout << endl;
+    }
+}
+
+int SudokuReader::updateSquare()
+{
+    int numUpdated = 0;
+
+    // For each element in 'square'
+    for ( int row = 0 ; row < Dimension ; row++ )
+    {
+        for ( int col = 0 ; col < Dimension ; col++ )
+        {
+            // Find the number of elements that are non-zero
+            int num_poss = count_if(poss[row][col].begin(), 
+                                    poss[row][col].end(), 
+                                    [](int i) { return i!=0; } );
+
+            // If poss[row][col] has only one possible value,
+            // and the corresponding element in 'square' is unknown
+            if ( (1 == num_poss) && !square[row][col] )
+            {
+                // Find the remaining value in the possibility list for this element
+                std::vector<int>::iterator it = find_if(poss[row][col].begin(), 
+                                                        poss[row][col].end(), 
+                                                        [](int i) { return i!=0; } );
+                assert(it != poss[row][col].end());
+
+                // Update square with the new confirmed number
+                square[row][col] = *it;
+                numUpdated++;
+            }
+        }
+    }
+
+    return numUpdated;
+}

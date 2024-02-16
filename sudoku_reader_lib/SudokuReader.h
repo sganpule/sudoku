@@ -50,9 +50,11 @@ private:
     vector< vector< int          > >  square;
     vector< vector< vector <int> > >  poss;
 
-    void updatePossMatrix();
+    void updatePossLists();
+    int  updateSquare();
+    void printPoss();
 
-    int validateInput();
+    int  validateInput();
 
     
 };
