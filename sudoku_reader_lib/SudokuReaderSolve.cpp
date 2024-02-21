@@ -296,7 +296,7 @@ int SudokuReader::doTwoPossPass()
                   //cout << "posss[row][col][*pval]: " << poss[row][col][*pval] << endl;
 
                     // Go along the row...
-                    // For each element i in pval's row
+                    // For each element r in pval's row
                     for ( int r = 0 ; r < Dimension ; r++ )
                     {
                         // For each element in the row, except for 'this' one
@@ -322,6 +322,37 @@ int SudokuReader::doTwoPossPass()
                         square[row][col] = *pval;
                         numUpdated++;
                     }
+                    else
+                    {
+                        // Go along the column...
+                        // For each element c in pval's column
+                        for ( int c = 0 ; c < Dimension ; c++ )
+                        {
+                            // For each element in the column, except for 'this' one
+                            if (c != row)
+                            {
+                                // Find if this number is in i's possibility list
+                                num_poss = count_if(poss[row][c].begin(), 
+                                                    poss[row][c].end(),
+                                                    [=](int k) { return (poss[c][row][*pval]==*pval); } );
+                            }
+
+                            // If *pval is in i's possibility list
+                            if (num_poss)
+                            {
+                                // Stop looking in this row
+                                break;
+                            }
+                        }
+                        if (!num_poss)
+                        {
+                            // pval is not possible anywhere else, this must be the value
+                            cout << "Found that " << *pval << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
+                            square[row][col] = *pval;
+                            numUpdated++;
+                        }
+                    }
+
                 }
 
             }
