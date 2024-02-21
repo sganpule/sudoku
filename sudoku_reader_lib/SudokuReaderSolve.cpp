@@ -23,14 +23,17 @@ int SudokuReader::solve()
     do
     {
         updatePossLists();
-        cout << "The updated possiblity matrix...\n";
+        cout << "The latest possiblity matrix...\n";
         printPoss();
 
         squaresUpdated = updateSquare();
-        cout << "The updated square...\n";
-        cout << *this << endl;
+        if (squaresUpdated)
+        {
+            cout << "Updated " << squaresUpdated << " squares!\n\n";
 
-        cout << "Updated " << squaresUpdated << " squares!\n\n";
+            cout << "The updated square...\n";
+            cout << *this << endl;
+        }
 
     } while (squaresUpdated);
     
@@ -209,9 +212,27 @@ void SudokuReader::printPoss()
         }
         cout << endl;
     }
+    cout << endl;
 }
 
 int SudokuReader::updateSquare()
+{
+    int numUpdated = 0;
+
+    cout << "Reducing based on num_poss == 1.\n";
+    numUpdated = doOnePossPass();
+
+    if (0 == numUpdated)
+    {
+        cout << "No squares udpated!\n\n";
+        cout << "Reducing based on num_poss == 2.\n";
+        numUpdated = doTwoPossPass();
+    }
+
+    return numUpdated;
+}
+
+int SudokuReader::doOnePossPass()
 {
     int numUpdated = 0;
 
@@ -220,7 +241,7 @@ int SudokuReader::updateSquare()
     {
         for ( int col = 0 ; col < Dimension ; col++ )
         {
-            // Find the number of elements that are non-zero
+            // Find the number of elements that are non-zero; (i.e. still possible)
             int num_poss = count_if(poss[row][col].begin(), 
                                     poss[row][col].end(), 
                                     [](int i) { return i!=0; } );
@@ -237,7 +258,72 @@ int SudokuReader::updateSquare()
 
                 // Update square with the new confirmed number
                 square[row][col] = *it;
+              //cout << "setting row: " << row+1 << "col: " << col+1 << " to *it: " << *it << endl;
                 numUpdated++;
+            }
+        }
+    }
+
+    return numUpdated;
+}
+
+int SudokuReader::doTwoPossPass()
+{
+    int numUpdated = 0;
+
+    // For each element in 'square'
+    for ( int row = 0 ; row < Dimension ; row++ )
+    {
+        for ( int col = 0 ; col < Dimension ; col++ )
+        {
+            vector<int> sl; // short list
+
+            // Find the number of elements that are non-zero; (i.e. still possible)
+            int num_poss = count_if(poss[row][col].begin(), 
+                                    poss[row][col].end(), 
+                                    [&](int i) { if (i!=0) sl.push_back(i); return (i!=0); } );
+
+            // If poss[row][col] has two possible values,
+            // and the corresponding element in 'square' is unknown
+            if ( (2 == num_poss) && !square[row][col] )
+            {
+                assert(sl.size() == 2);
+
+                // For each possible value 'pval'
+                for (auto pval = sl.begin() ; pval != sl.end() ; pval++ )
+                {
+                  //cout << "Processing *pval: " << *pval << endl;
+                  //cout << "posss[row][col][*pval]: " << poss[row][col][*pval] << endl;
+
+                    // Go along the row...
+                    // For each element i in pval's row
+                    for ( int r = 0 ; r < Dimension ; r++ )
+                    {
+                        // For each element in the row, except for 'this' one
+                        if (r != col)
+                        {
+                            // Find if this number is in i's possibility list
+                            num_poss = count_if(poss[row][r].begin(), 
+                                                poss[row][r].end(),
+                                                [=](int k) { return (poss[row][r][*pval]==*pval); } );
+                        }
+
+                        // If *pval is in i's possibility list
+                        if (num_poss)
+                        {
+                            // Stop looking in this row
+                            break;
+                        }
+                    }
+                    if (!num_poss)
+                    {
+                        // pval is not possible anywhere else, this must be the value
+                      //cout << "Found that " << *pval << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
+                        square[row][col] = *pval;
+                        numUpdated++;
+                    }
+                }
+
             }
         }
     }

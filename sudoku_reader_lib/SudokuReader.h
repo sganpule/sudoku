@@ -52,6 +52,9 @@ private:
 
     void updatePossLists();
     int  updateSquare();
+    int  doOnePossPass();
+    int  doTwoPossPass();
+
     void printPoss();
 
     int  validateInput();
