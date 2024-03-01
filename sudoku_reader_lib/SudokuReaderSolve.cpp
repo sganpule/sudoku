@@ -20,11 +20,12 @@ int SudokuReader::solve()
     cout << "The orginal square...\n";
     cout << *this << endl;
 
+    cout << "The latest possiblity matrix...\n";
+    updatePossLists();
+    printPoss();
+
     do
     {
-        updatePossLists();
-        cout << "The latest possiblity matrix...\n";
-        printPoss();
 
         squaresUpdated = updateSquare();
         if (squaresUpdated)
@@ -33,7 +34,11 @@ int SudokuReader::solve()
 
             cout << "The updated square...\n";
             cout << *this << endl;
+
+            cout << "The latest possiblity matrix...\n";
+            printPoss();
         }
+
 
     } while (squaresUpdated);
     
@@ -244,6 +249,11 @@ int SudokuReader::updateSquare()
         cout << "No squares udpated!\n\n";
         cout << "Reducing based on num_poss == 2.\n";
         numUpdated = doTwoPossPass();
+        
+        if (0 == numUpdated)
+        {
+            cout << "No squares udpated!\n\n";
+        }
     }
 
     return numUpdated;
@@ -277,6 +287,10 @@ int SudokuReader::doOnePossPass()
                 square[row][col] = *it;
                 cout << "Found that: " << *it << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
                 numUpdated++;
+
+                // Update the possibility matrix
+                updatePossLists();
+
             }
         }
     }
@@ -312,6 +326,7 @@ int SudokuReader::doTwoPossPass()
 //                  cout << "Processing *pval: " << *pval << endl;
 //                  cout << "posss["<<row<<"]["<<col<<"]["<<*pval<<"]: " << poss[row][col][*pval] << endl;
 
+                    // STEP 1
                     // Go along the row...
                     // For each element c in pval's row
                     for ( int c = 0 ; c < Dimension ; c++ )
@@ -336,11 +351,16 @@ int SudokuReader::doTwoPossPass()
                     if (!num_poss)
                     {
                         // pval is not possible anywhere else, this must be the value
-                        cout << "Found that.: " << *pval << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
+                        cout << "Found that.  : " << *pval << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
                         square[row][col] = *pval;
                         numUpdated++;
+
+                        // Update the possibility matrix
+                        updatePossLists();
+
                     }
 
+                    // STEP 2
                     // Go along the column...
                     // For each element r in pval's column
                     for ( int r = 0 ; r < Dimension ; r++ )
@@ -364,16 +384,16 @@ int SudokuReader::doTwoPossPass()
                     if (!num_poss)
                     {
                         // pval is not possible anywhere else, this must be the value
-                        cout << "Found that.. " << *pval << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
+                        cout << "Found that.. : " << *pval << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
                         square[row][col] = *pval;
                         numUpdated++;
+
+                        // Update the possibility matrix
+                        updatePossLists();
                     }
 
-#if(1)
-                    if (numUpdated==0)  // REMOVING THIS LINE CAUSES AN ASSERT!
-                    {
+                    // STEP 3
                     // Go along each local square...
-
                     // First determine which local square
                     int rowSnap = (row / 3) * LocalSqDim;
                     int colSnap = (col / 3) * LocalSqDim;
@@ -414,16 +434,14 @@ int SudokuReader::doTwoPossPass()
                     if (!num_poss)
                     {
                         // pval is not possible anywhere else, this must be the value
-                        cout << "Found that... " << *pval << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
+                        cout << "Found that...: " << *pval << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
                         square[row][col] = *pval;
                         numUpdated++;
-                    }
-                    }
-#endif
 
-
+                        // Update the possibility matrix
+                        updatePossLists();
+                    }
                 }
-
             }
         }
     }

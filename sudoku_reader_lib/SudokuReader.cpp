@@ -241,7 +241,12 @@ ostream& operator<<(ostream& os, SudokuReader sr)
 
         for ( int col = 0 ; col < SudokuReader::Dimension ; col++ )
         {
-            cout << sr.square[row][col] << " ";
+            int         val = sr.square[row][col];
+            
+            if (val)
+                cout << val << " ";
+            else
+                cout << "." << " ";
         }
         cout << endl;
     }
