@@ -29,7 +29,7 @@ int SudokuReader::solve()
         squaresUpdated = updateSquare();
         if (squaresUpdated)
         {
-            cout << "Updated " << squaresUpdated << " squares!\n\n";
+            cout << "Updated " << squaresUpdated << " square(s)!\n\n";
 
             cout << "The updated square...\n";
             cout << *this << endl;
@@ -70,6 +70,9 @@ void SudokuReader::updatePossLists()
         }
     }
 
+//cout << "\n\nThe initializdd possiblity matrix...\n";
+//printPoss();
+
     // Start on the columns
     for ( int sq_col = 0 ; sq_col < Dimension ; sq_col++ )
     {
@@ -104,6 +107,9 @@ void SudokuReader::updatePossLists()
         }
 **/
     }
+
+//cout << "\n\nThe possiblity matrix after the columns...\n";
+//printPoss();
 
     // Start on the rows
     for ( int sq_row = 0 ; sq_row < Dimension ; sq_row++ )
@@ -140,6 +146,10 @@ void SudokuReader::updatePossLists()
 **/
     }
 
+//cout << "\n\nThe possiblity matrix after the rows...\n";
+//printPoss();
+
+
 
     // Local squares are labelled as:
     // Square Numbers : 0 1 2        Starting at : 0,0 0,3 0,6
@@ -171,7 +181,7 @@ void SudokuReader::updatePossLists()
                             // If this search square is not yet known...
                             if (!square[i][j])
                             {
-                                // Remove 'thisElement' from [j, i]'s possibility list
+                                // Remove 'thisElement' from [i, j]'s possibility list
                                 poss[ i ][ j ][ thisElement ] = 0;
                             }
                         }
@@ -192,6 +202,10 @@ void SudokuReader::updatePossLists()
         }
     }
 
+//cout << "\n\nThe possiblity matrix after the local squares...\n";
+//printPoss();
+
+
 }
 
 void SudokuReader::printPoss()
@@ -207,6 +221,9 @@ void SudokuReader::printPoss()
             int num_poss = count_if(poss[row][col].begin(), 
                                     poss[row][col].end(), 
                                     [](int i) { return i!=0; } );
+
+            assert(num_poss > 0);
+            assert(num_poss <= 9);
 
             cout << num_poss << " ";
         }
@@ -258,7 +275,7 @@ int SudokuReader::doOnePossPass()
 
                 // Update square with the new confirmed number
                 square[row][col] = *it;
-              //cout << "setting row: " << row+1 << "col: " << col+1 << " to *it: " << *it << endl;
+                cout << "Found that: " << *it << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
                 numUpdated++;
             }
         }
@@ -289,26 +306,55 @@ int SudokuReader::doTwoPossPass()
             {
                 assert(sl.size() == 2);
 
-                // For each possible value 'pval'
+                // For each of the two possible values 'pval'
                 for (auto pval = sl.begin() ; pval != sl.end() ; pval++ )
                 {
-                  //cout << "Processing *pval: " << *pval << endl;
-                  //cout << "posss[row][col][*pval]: " << poss[row][col][*pval] << endl;
+//                  cout << "Processing *pval: " << *pval << endl;
+//                  cout << "posss["<<row<<"]["<<col<<"]["<<*pval<<"]: " << poss[row][col][*pval] << endl;
 
                     // Go along the row...
-                    // For each element r in pval's row
-                    for ( int r = 0 ; r < Dimension ; r++ )
+                    // For each element c in pval's row
+                    for ( int c = 0 ; c < Dimension ; c++ )
                     {
                         // For each element in the row, except for 'this' one
-                        if (r != col)
+                        if (c != col)
                         {
-                            // Find if this number is in i's possibility list
-                            num_poss = count_if(poss[row][r].begin(), 
-                                                poss[row][r].end(),
-                                                [=](int k) { return (poss[row][r][*pval]==*pval); } );
+                            // Find if this number is in any other cell c's possibility list
+                            num_poss = count_if(poss[row][c].begin(), 
+                                                poss[row][c].end(),
+                                                [=](int k) { return (poss[row][c][*pval]==*pval); } );
                         }
 
-                        // If *pval is in i's possibility list
+                        // If *pval is in c's possibility list
+                        if (num_poss)
+                        {
+                            // Stop looking in this row
+                          //cout << "*pval: " << *pval << " is in row: " << row << " c: " << c << "'s possibility list" << endl;
+                            break;
+                        }
+                    }
+                    if (!num_poss)
+                    {
+                        // pval is not possible anywhere else, this must be the value
+                        cout << "Found that.: " << *pval << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
+                        square[row][col] = *pval;
+                        numUpdated++;
+                    }
+
+                    // Go along the column...
+                    // For each element r in pval's column
+                    for ( int r = 0 ; r < Dimension ; r++ )
+                    {
+                        // For each element in the column, except for 'this' one
+                        if (r != row)
+                        {
+                            // Find if this number is in any other cell r's possibility list
+                            num_poss = count_if(poss[r][col].begin(), 
+                                                poss[r][col].end(),
+                                                [=](int k) { return (poss[r][row][*pval]==*pval); } );
+                        }
+
+                        // If *pval is in r's possibility list
                         if (num_poss)
                         {
                             // Stop looking in this row
@@ -318,40 +364,63 @@ int SudokuReader::doTwoPossPass()
                     if (!num_poss)
                     {
                         // pval is not possible anywhere else, this must be the value
-                      //cout << "Found that " << *pval << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
+                        cout << "Found that.. " << *pval << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
                         square[row][col] = *pval;
                         numUpdated++;
                     }
-                    else
-                    {
-                        // Go along the column...
-                        // For each element c in pval's column
-                        for ( int c = 0 ; c < Dimension ; c++ )
-                        {
-                            // For each element in the column, except for 'this' one
-                            if (c != row)
-                            {
-                                // Find if this number is in i's possibility list
-                                num_poss = count_if(poss[row][c].begin(), 
-                                                    poss[row][c].end(),
-                                                    [=](int k) { return (poss[c][row][*pval]==*pval); } );
-                            }
 
-                            // If *pval is in i's possibility list
-                            if (num_poss)
-                            {
-                                // Stop looking in this row
-                                break;
-                            }
-                        }
-                        if (!num_poss)
+#if(1)
+                    if (numUpdated==0)  // REMOVING THIS LINE CAUSES AN ASSERT!
+                    {
+                    // Go along each local square...
+
+                    // First determine which local square
+                    int rowSnap = (row / 3) * LocalSqDim;
+                    int colSnap = (col / 3) * LocalSqDim;
+
+                    // For each element [lr][lc]] in pval's local square
+                    bool pvalStillPoss = true;
+                    for ( int lr = rowSnap ; lr < rowSnap + LocalSqDim ; lr++ )
+                    {
+                        for ( int lc = colSnap ; lc < colSnap + LocalSqDim ; lc++ )
                         {
-                            // pval is not possible anywhere else, this must be the value
-                            cout << "Found that " << *pval << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
-                            square[row][col] = *pval;
-                            numUpdated++;
+                            if (pvalStillPoss)
+                            {
+//                              cout << "Processing *pval: " << *pval << endl;
+//                              cout << "rowSnap: " << rowSnap << " colSnap: " << colSnap << " lr: " << lr << " lc: " << lc << endl;
+
+                                // For each empty element in this local square, except for 'this' one
+                                num_poss = 0;
+                                if ( (0 == square[lr][lc]) &&
+                                     (!((lr == row) && (lc == col)) ) )
+                                {
+                                    // Find if this number is in any other cell [lr,lc]'s possibility list
+                                    num_poss = count_if(poss[lr][lc].begin(), 
+                                                        poss[lr][lc].end(),
+                                                        [=](int k) { return (poss[lr][lc][*pval]==*pval); } );
+//                                  cout << "searching lr: "<<lr<<" lc: " << lc << endl;
+                                }
+
+                                // If *pval is in i's possibility list
+                                if (num_poss)
+                                {
+                                    // Stop looking in this row
+//                                  cout << "found *pval at lr: "<<lr<<" lc: " << lc << endl;
+                                    pvalStillPoss = false;
+                                }
+                            }
                         }
                     }
+                    if (!num_poss)
+                    {
+                        // pval is not possible anywhere else, this must be the value
+                        cout << "Found that... " << *pval << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
+                        square[row][col] = *pval;
+                        numUpdated++;
+                    }
+                    }
+#endif
+
 
                 }
 
