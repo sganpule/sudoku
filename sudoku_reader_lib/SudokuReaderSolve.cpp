@@ -17,34 +17,56 @@ int SudokuReader::solve()
 {
     int squaresUpdated;
 
-    cout << "The orginal square...\n";
-    cout << *this << endl;
+//  cout << "The orginal square...\n";
+//  cout << *this << endl;
 
-    cout << "The latest possiblity matrix...\n";
     updatePossLists();
-    printPoss();
+//  cout << "The first possiblity matrix...\n";
+//  printPoss();
 
     do
     {
-
         squaresUpdated = updateSquare();
+        assert(SudokuReader::NoError == isValid());
+
         if (squaresUpdated)
         {
-            cout << "Updated " << squaresUpdated << " square(s)!\n\n";
+//          cout << "Updated " << squaresUpdated << " square(s)!\n\n";
 
-            cout << "The updated square...\n";
-            cout << *this << endl;
+//          cout << "The updated square...\n";
+//          cout << *this << endl;
 
-            cout << "The latest possiblity matrix...\n";
-            printPoss();
+//          cout << "The latest possiblity matrix...\n";
+//          printPoss();
+
         }
-
 
     } while (squaresUpdated);
     
+    if (SudokuReader::Solved == isSolved())
+    {
+//      cout << "The square was solved!\n";
+//      cout << *this << endl;
+    }
 
-    return CouldNotSolve;
+    return isSolved();
 }
+
+int SudokuReader::isSolved()
+{
+    for ( int sq_col = 0 ; sq_col < Dimension ; sq_col++ )
+    {
+        for ( int sq_row = 0 ; sq_row < Dimension ; sq_row++ )
+        {
+            if (0 == square[sq_row][sq_col])
+            {
+                return NotSolved;
+            }
+        }
+    }    
+    return Solved;
+}
+
 
 void SudokuReader::updatePossLists()
 {
@@ -241,18 +263,18 @@ int SudokuReader::updateSquare()
 {
     int numUpdated = 0;
 
-    cout << "Reducing based on num_poss == 1.\n";
+//  cout << "Reducing based on num_poss == 1.\n";
     numUpdated = doOnePossPass();
 
     if (0 == numUpdated)
     {
-        cout << "No squares udpated!\n\n";
-        cout << "Reducing based on num_poss == 2.\n";
+//      cout << "No squares udpated!\n\n";
+//      cout << "Reducing based on num_poss == 2.\n";
         numUpdated = doTwoPossPass();
         
         if (0 == numUpdated)
         {
-            cout << "No squares udpated!\n\n";
+//          cout << "No squares udpated!\n\n";
         }
     }
 
@@ -285,7 +307,7 @@ int SudokuReader::doOnePossPass()
 
                 // Update square with the new confirmed number
                 square[row][col] = *it;
-                cout << "Found that: " << *it << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
+//              cout << "Found that: " << *it << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
                 numUpdated++;
 
                 // Update the possibility matrix
@@ -351,7 +373,7 @@ int SudokuReader::doTwoPossPass()
                     if (!num_poss)
                     {
                         // pval is not possible anywhere else, this must be the value
-                        cout << "Found that.  : " << *pval << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
+//                      cout << "Found that.  : " << *pval << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
                         square[row][col] = *pval;
                         numUpdated++;
 
@@ -384,7 +406,7 @@ int SudokuReader::doTwoPossPass()
                     if (!num_poss)
                     {
                         // pval is not possible anywhere else, this must be the value
-                        cout << "Found that.. : " << *pval << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
+//                      cout << "Found that.. : " << *pval << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
                         square[row][col] = *pval;
                         numUpdated++;
 
@@ -434,7 +456,7 @@ int SudokuReader::doTwoPossPass()
                     if (!num_poss)
                     {
                         // pval is not possible anywhere else, this must be the value
-                        cout << "Found that...: " << *pval << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
+//                      cout << "Found that...: " << *pval << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
                         square[row][col] = *pval;
                         numUpdated++;
 

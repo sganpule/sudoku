@@ -112,6 +112,8 @@ int SudokuReader::isValid(int* error_row, int* error_col)
         }
     }
 
+    // Check for duplication in the local squares
+
     // Local squares are labelled as:
     // Square Numbers : 0 1 2        Starting at : 0,0 0,3 0,6
     //                  3 4 5                      3,0 3,3 3,6

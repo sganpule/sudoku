@@ -35,7 +35,7 @@ public:
     enum
     {
         Solved,
-        CouldNotSolve
+        NotSolved
     } SudokuReaderSolveReturnValues;
 
     static const int    NumLocalSq;
@@ -56,7 +56,7 @@ private:
     int  doTwoPossPass();
 
     void printPoss();
-
+    int  isSolved();
     int  validateInput();
 
     
