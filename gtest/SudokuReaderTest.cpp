@@ -46,7 +46,7 @@ class SudokuReaderTest : public testing::Test {
 
 
 
-int openInputFile(fstream& fin, string& inputFileName)
+static int openInputFile(fstream& fin, string& inputFileName)
 {
     int returnVal = 0;
 

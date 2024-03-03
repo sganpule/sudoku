@@ -24,18 +24,45 @@ SudokuReader::SudokuReader()
              :isSquareValid(true)
 {
     // Resize sudoku square storage to SudokuReader::Dimension x SudokuReader::Dimension
-    square.resize( SudokuReader::Dimension, vector<int>(SudokuReader::Dimension) );
-    assert(SudokuReader::Dimension == square.size());
-    assert(SudokuReader::Dimension == square[0].size());
+    square.resize( Dimension, vector<int>(Dimension) );
+    assert(Dimension == square.size());
+    assert(Dimension == square[0].size());
 
-    for ( int i = 0 ; i < SudokuReader::Dimension ; i++ )
+    for ( int i = 0 ; i < Dimension ; i++ )
     {
-        for ( int j = 0 ; j < SudokuReader::Dimension ; j++ )
+        for ( int j = 0 ; j < Dimension ; j++ )
         {
             square[i][j] = 0;
         }
     }
 
+    // Resize poss square storage. (Dimension x Dimension x Dimension)
+    poss.resize(Dimension);
+    for (int i = 0; i < Dimension; i++)
+    {
+        poss[i].resize(Dimension);
+
+        for (int j = 0; j < Dimension; j++)
+        {
+            // Need to add +1 to make indexing via square values easy
+            poss[i][j].resize(Dimension+1);
+        }
+    }
+
+    for ( int i = 0 ; i < Dimension ; i++ )
+    {
+        for ( int j = 0 ; j < Dimension ; j++ )
+        {
+            int fill = 0;
+            for ( auto k = poss[i][j].begin() ; k != poss[i][j].end() ; k++ )
+            {
+                // All values are possible at init time
+                // -- FYI, this could be '1', but using the element
+                //    to make it easier to read while debugging   
+                *k = fill++;
+            }
+        }
+    }
 }
 
 int SudokuReader::isValid(int* error_row, int* error_col)
@@ -85,7 +112,9 @@ int SudokuReader::isValid(int* error_row, int* error_col)
         }
     }
 
-    // Check for duplication in each local squre, local squares are labelled as:
+    // Check for duplication in the local squares
+
+    // Local squares are labelled as:
     // Square Numbers : 0 1 2        Starting at : 0,0 0,3 0,6
     //                  3 4 5                      3,0 3,3 3,6
     //                  6 7 8                      6,0 6,3 6,6 
@@ -95,8 +124,9 @@ int SudokuReader::isValid(int* error_row, int* error_col)
     for ( int locsq = 0 ; locsq < SudokuReader::NumLocalSq ; locsq++ )
     {
         // Track which numbers we see, +1 to allow for indexing from 1-9
-        vector<int>     sq(SudokuReader::Dimension+1, 0);
-        int             rstart = 3 * (locsq / LocalSqDim);
+        vector<int> sq(SudokuReader::Dimension+1, 0);
+
+        int         rstart = 3 * (locsq / LocalSqDim);
         for ( row = rstart ; row < rstart + SudokuReader::LocalSqDim ; row++ )
         {
             int         cstart = 3 * (locsq % LocalSqDim);
@@ -213,7 +243,12 @@ ostream& operator<<(ostream& os, SudokuReader sr)
 
         for ( int col = 0 ; col < SudokuReader::Dimension ; col++ )
         {
-            cout << sr.square[row][col] << " ";
+            int         val = sr.square[row][col];
+            
+            if (val)
+                cout << val << " ";
+            else
+                cout << "." << " ";
         }
         cout << endl;
     }
