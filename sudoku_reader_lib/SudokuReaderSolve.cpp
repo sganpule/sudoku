@@ -12,41 +12,51 @@
 
 using namespace std;
 
+#define PRINT_INFO 0
 
 int SudokuReader::solve()
 {
     int squaresUpdated;
 
-//  cout << "The orginal square...\n";
-//  cout << *this << endl;
+#if(PRINT_INFO)
+    //  cout << "The orginal square...\n";
+    //  cout << *this << endl;
+#endif
 
     updatePossLists();
-//  cout << "The first possiblity matrix...\n";
-//  printPoss();
+
+#if(PRINT_INFO)
+    //  cout << "The first possiblity matrix...\n";
+    //  printPoss();
+#endif
 
     do
     {
         squaresUpdated = updateSquare();
         assert(SudokuReader::NoError == isValid());
 
+#if(PRINT_INFO)
         if (squaresUpdated)
         {
-//          cout << "Updated " << squaresUpdated << " square(s)!\n\n";
+            cout << "Updated " << squaresUpdated << " square(s)!\n\n";
 
-//          cout << "The updated square...\n";
-//          cout << *this << endl;
+            cout << "The updated square...\n";
+            cout << *this << endl;
 
-//          cout << "The latest possiblity matrix...\n";
-//          printPoss();
+            cout << "The latest possiblity matrix...\n";
+            printPoss();
 
         }
+#endif
 
     } while (squaresUpdated);
     
     if (SudokuReader::Solved == isSolved())
     {
-//      cout << "The square was solved!\n";
-//      cout << *this << endl;
+#if(PRINT_INFO)
+        cout << "The square was solved!\n";
+        cout << *this << endl;
+#endif
     }
 
     return isSolved();
@@ -100,7 +110,7 @@ void SudokuReader::updatePossLists()
 //cout << "\n\nThe initializdd possiblity matrix...\n";
 //printPoss();
 
-    // Start on the columns
+    // Then, start on the COLUMNS
     for ( int sq_col = 0 ; sq_col < Dimension ; sq_col++ )
     {
         for ( int sq_row = 0 ; sq_row < Dimension ; sq_row++ )
@@ -113,10 +123,10 @@ void SudokuReader::updatePossLists()
                 // For each row element in this column
                 for ( int i = 0 ; i < Dimension ; i++ )
                 {
-                    // If this square is not yet known...
+                    // If the square is not yet known...
                     if (!square[i][sq_col])
                     {
-                        // Remove 'thisElement' from [sq_col, i]'s possibility list
+                        // Remove 'thisElement' from [i, sq_col]'s possibility list
                         poss[ i ][ sq_col ][ thisElement ] = 0;
                     }
                 }
@@ -138,7 +148,7 @@ void SudokuReader::updatePossLists()
 //cout << "\n\nThe possiblity matrix after the columns...\n";
 //printPoss();
 
-    // Start on the rows
+    // Then, start on the ROWS
     for ( int sq_row = 0 ; sq_row < Dimension ; sq_row++ )
     {
         for ( int sq_col = 0 ; sq_col < Dimension ; sq_col++ )
@@ -186,7 +196,7 @@ void SudokuReader::updatePossLists()
     // 0 0 0 3 3 3 6 6 6 Row        == 3 * ( n / 3 )
     // 0 3 6 0 3 6 0 3 6 Col        == 3 * ( n % 3 )
 
-    // Start on the local squares
+    // Then, start on the LOCAL SQUARES
     for ( int locsq = 0 ; locsq < NumLocalSq ; locsq++ )
     {
         int                rstart = 3 * (locsq / LocalSqDim);
@@ -252,7 +262,14 @@ void SudokuReader::printPoss()
             assert(num_poss > 0);
             assert(num_poss <= 9);
 
-            cout << num_poss << " ";
+            if (!square[row][col])
+            {
+                cout << num_poss << " ";
+            }
+            else
+            {
+                cout << "." << " ";
+            }
         }
         cout << endl;
     }
@@ -270,7 +287,7 @@ int SudokuReader::updateSquare()
     {
 //      cout << "No squares udpated!\n\n";
 //      cout << "Reducing based on num_poss == 2.\n";
-        numUpdated = doTwoPossPass();
+        numUpdated = doMultiPossPass();
         
         if (0 == numUpdated)
         {
@@ -306,13 +323,13 @@ int SudokuReader::doOnePossPass()
                 assert(it != poss[row][col].end());
 
                 // Update square with the new confirmed number
+//              cout << "Found that   : " << *it << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
                 square[row][col] = *it;
-//              cout << "Found that: " << *it << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
                 numUpdated++;
+                assert(SudokuReader::NoError == isValid());
 
                 // Update the possibility matrix
                 updatePossLists();
-
             }
         }
     }
@@ -320,7 +337,7 @@ int SudokuReader::doOnePossPass()
     return numUpdated;
 }
 
-int SudokuReader::doTwoPossPass()
+int SudokuReader::doMultiPossPass()
 {
     int numUpdated = 0;
 
@@ -332,24 +349,19 @@ int SudokuReader::doTwoPossPass()
             vector<int> sl; // short list
 
             // Find the number of elements that are non-zero; (i.e. still possible)
+            // Populate short list vector 'sl' with the possible values
             int num_poss = count_if(poss[row][col].begin(), 
                                     poss[row][col].end(), 
                                     [&](int i) { if (i!=0) sl.push_back(i); return (i!=0); } );
 
-            // If poss[row][col] has two possible values,
-            // and the corresponding element in 'square' is unknown
-            if ( (2 == num_poss) && !square[row][col] )
+            // STEP 1
+            // Go along the ROW...
+            // If the corresponding element in 'square' is unknown
+            if ( !square[row][col] )
             {
-                assert(sl.size() == 2);
-
-                // For each of the two possible values 'pval'
+                // For each of the possible values 'pval'
                 for (auto pval = sl.begin() ; pval != sl.end() ; pval++ )
                 {
-//                  cout << "Processing *pval: " << *pval << endl;
-//                  cout << "posss["<<row<<"]["<<col<<"]["<<*pval<<"]: " << poss[row][col][*pval] << endl;
-
-                    // STEP 1
-                    // Go along the row...
                     // For each element c in pval's row
                     for ( int c = 0 ; c < Dimension ; c++ )
                     {
@@ -366,7 +378,6 @@ int SudokuReader::doTwoPossPass()
                         if (num_poss)
                         {
                             // Stop looking in this row
-                          //cout << "*pval: " << *pval << " is in row: " << row << " c: " << c << "'s possibility list" << endl;
                             break;
                         }
                     }
@@ -376,14 +387,23 @@ int SudokuReader::doTwoPossPass()
 //                      cout << "Found that.  : " << *pval << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
                         square[row][col] = *pval;
                         numUpdated++;
+                        assert(SudokuReader::NoError == isValid());
 
                         // Update the possibility matrix
                         updatePossLists();
-
                     }
+                }
+            }
 
-                    // STEP 2
-                    // Go along the column...
+            // STEP 2
+            // Go along the column...
+            // If the corresponding element in 'square' is unknown
+            if ( !square[row][col] )
+            {
+                // For each of the possible values 'pval'
+                for (auto pval = sl.begin() ; pval != sl.end() ; pval++ )
+                {
+
                     // For each element r in pval's column
                     for ( int r = 0 ; r < Dimension ; r++ )
                     {
@@ -393,7 +413,7 @@ int SudokuReader::doTwoPossPass()
                             // Find if this number is in any other cell r's possibility list
                             num_poss = count_if(poss[r][col].begin(), 
                                                 poss[r][col].end(),
-                                                [=](int k) { return (poss[r][row][*pval]==*pval); } );
+                                                [=](int k) { return (poss[r][col][*pval]==*pval); } );
                         }
 
                         // If *pval is in r's possibility list
@@ -409,13 +429,23 @@ int SudokuReader::doTwoPossPass()
 //                      cout << "Found that.. : " << *pval << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
                         square[row][col] = *pval;
                         numUpdated++;
+                        assert(SudokuReader::NoError == isValid());
 
                         // Update the possibility matrix
                         updatePossLists();
                     }
+                }
+            }
 
-                    // STEP 3
-                    // Go along each local square...
+
+            // STEP 3
+            // Go along each local square...
+            // If the corresponding element in 'square' is unknown
+            if ( !square[row][col] )
+            {
+                // For each of the possible values 'pval'
+                for (auto pval = sl.begin() ; pval != sl.end() ; pval++ )
+                {
                     // First determine which local square
                     int rowSnap = (row / 3) * LocalSqDim;
                     int colSnap = (col / 3) * LocalSqDim;
@@ -447,7 +477,6 @@ int SudokuReader::doTwoPossPass()
                                 if (num_poss)
                                 {
                                     // Stop looking in this row
-//                                  cout << "found *pval at lr: "<<lr<<" lc: " << lc << endl;
                                     pvalStillPoss = false;
                                 }
                             }
@@ -456,9 +485,10 @@ int SudokuReader::doTwoPossPass()
                     if (!num_poss)
                     {
                         // pval is not possible anywhere else, this must be the value
-//                      cout << "Found that...: " << *pval << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
+                        //ut << "Found that...: " << *pval << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
                         square[row][col] = *pval;
                         numUpdated++;
+                        assert(SudokuReader::NoError == isValid());
 
                         // Update the possibility matrix
                         updatePossLists();

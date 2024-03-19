@@ -64,6 +64,10 @@ int main(int argc, char* argv[])
     }
 
     cout << "This is what we're working on:\n" << reader;
+
+    // Solve File
+    status = reader.solve();
+
 }
 
 

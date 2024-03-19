@@ -36,7 +36,7 @@ SudokuReader::SudokuReader()
         }
     }
 
-    // Resize poss square storage. (Dimension x Dimension x Dimension)
+    // Resize poss square storage. (Dimension x Dimension x Dimension+1)
     poss.resize(Dimension);
     for (int i = 0; i < Dimension; i++)
     {
