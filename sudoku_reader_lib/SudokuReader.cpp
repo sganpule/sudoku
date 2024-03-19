@@ -36,7 +36,7 @@ SudokuReader::SudokuReader()
         }
     }
 
-    // Resize poss square storage. (Dimension x Dimension x Dimension)
+    // Resize poss square storage. (Dimension x Dimension x Dimension+1)
     poss.resize(Dimension);
     for (int i = 0; i < Dimension; i++)
     {
@@ -84,6 +84,7 @@ int SudokuReader::isValid(int* error_row, int* error_col)
                  ( v[ square[row][col] ]++ )    )
             {
                 isSquareValid   = false;
+                cout << *this;
                 retStatus       = SudokuReader::FoundDuplicateEntryCol;
 //              cerr << "Found column duplicate entry at row " << row+1 << ", col " << col+1 << ".\n";
                 goto cleanup;
