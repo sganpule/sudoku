@@ -53,7 +53,7 @@ private:
     void updatePossLists();
     int  updateSquare();
     int  doOnePossPass();
-    int  doTwoPossPass();
+    int  doMultiPossPass();
 
     void printPoss();
     int  isSolved();

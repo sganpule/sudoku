@@ -12,24 +12,30 @@
 
 using namespace std;
 
+#define PRINT_INFO 0
 
 int SudokuReader::solve()
 {
     int squaresUpdated;
 
-//  cout << "The orginal square...\n";
-//  cout << *this << endl;
+#if(PRINT_INFO)
+    //  cout << "The orginal square...\n";
+    //  cout << *this << endl;
+#endif
 
     updatePossLists();
-//  cout << "The first possiblity matrix...\n";
-//  printPoss();
+
+#if(PRINT_INFO)
+    //  cout << "The first possiblity matrix...\n";
+    //  printPoss();
+#endif
 
     do
     {
         squaresUpdated = updateSquare();
         assert(SudokuReader::NoError == isValid());
 
-#if(0)
+#if(PRINT_INFO)
         if (squaresUpdated)
         {
             cout << "Updated " << squaresUpdated << " square(s)!\n\n";
@@ -47,8 +53,10 @@ int SudokuReader::solve()
     
     if (SudokuReader::Solved == isSolved())
     {
+#if(PRINT_INFO)
         cout << "The square was solved!\n";
         cout << *this << endl;
+#endif
     }
 
     return isSolved();
@@ -279,7 +287,7 @@ int SudokuReader::updateSquare()
     {
 //      cout << "No squares udpated!\n\n";
 //      cout << "Reducing based on num_poss == 2.\n";
-        numUpdated = doTwoPossPass();
+        numUpdated = doMultiPossPass();
         
         if (0 == numUpdated)
         {
@@ -329,7 +337,7 @@ int SudokuReader::doOnePossPass()
     return numUpdated;
 }
 
-int SudokuReader::doTwoPossPass()
+int SudokuReader::doMultiPossPass()
 {
     int numUpdated = 0;
 
@@ -346,18 +354,14 @@ int SudokuReader::doTwoPossPass()
                                     poss[row][col].end(), 
                                     [&](int i) { if (i!=0) sl.push_back(i); return (i!=0); } );
 
-            // If poss[row][col] has two possible values,
-            // and the corresponding element in 'square' is unknown
+            // STEP 1
+            // Go along the ROW...
+            // If the corresponding element in 'square' is unknown
             if ( !square[row][col] )
             {
-                // For each of the two possible values 'pval'
+                // For each of the possible values 'pval'
                 for (auto pval = sl.begin() ; pval != sl.end() ; pval++ )
                 {
-//                  cout << "Processing *pval: " << *pval << endl;
-//                  cout << "posss["<<row<<"]["<<col<<"]["<<*pval<<"]: " << poss[row][col][*pval] << endl;
-
-                    // STEP 1
-                    // Go along the ROW...
                     // For each element c in pval's row
                     for ( int c = 0 ; c < Dimension ; c++ )
                     {
@@ -374,7 +378,6 @@ int SudokuReader::doTwoPossPass()
                         if (num_poss)
                         {
                             // Stop looking in this row
-                          //cout << "*pval: " << *pval << " is in row: " << row << " c: " << c << "'s possibility list" << endl;
                             break;
                         }
                     }
@@ -388,11 +391,19 @@ int SudokuReader::doTwoPossPass()
 
                         // Update the possibility matrix
                         updatePossLists();
-
                     }
+                }
+            }
 
-                    // STEP 2
-                    // Go along the column...
+            // STEP 2
+            // Go along the column...
+            // If the corresponding element in 'square' is unknown
+            if ( !square[row][col] )
+            {
+                // For each of the possible values 'pval'
+                for (auto pval = sl.begin() ; pval != sl.end() ; pval++ )
+                {
+
                     // For each element r in pval's column
                     for ( int r = 0 ; r < Dimension ; r++ )
                     {
@@ -423,9 +434,18 @@ int SudokuReader::doTwoPossPass()
                         // Update the possibility matrix
                         updatePossLists();
                     }
+                }
+            }
 
-                    // STEP 3
-                    // Go along each local square...
+
+            // STEP 3
+            // Go along each local square...
+            // If the corresponding element in 'square' is unknown
+            if ( !square[row][col] )
+            {
+                // For each of the possible values 'pval'
+                for (auto pval = sl.begin() ; pval != sl.end() ; pval++ )
+                {
                     // First determine which local square
                     int rowSnap = (row / 3) * LocalSqDim;
                     int colSnap = (col / 3) * LocalSqDim;
@@ -457,7 +477,6 @@ int SudokuReader::doTwoPossPass()
                                 if (num_poss)
                                 {
                                     // Stop looking in this row
-//                                  cout << "found *pval at lr: "<<lr<<" lc: " << lc << endl;
                                     pvalStillPoss = false;
                                 }
                             }
@@ -466,7 +485,7 @@ int SudokuReader::doTwoPossPass()
                     if (!num_poss)
                     {
                         // pval is not possible anywhere else, this must be the value
-//                      cout << "Found that...: " << *pval << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
+                        //ut << "Found that...: " << *pval << " must go in square"<<"["<<row<<"]["<<col<<"]\n";
                         square[row][col] = *pval;
                         numUpdated++;
                         assert(SudokuReader::NoError == isValid());

@@ -84,7 +84,6 @@ int SudokuReader::isValid(int* error_row, int* error_col)
                  ( v[ square[row][col] ]++ )    )
             {
                 isSquareValid   = false;
-                cout << *this;
                 retStatus       = SudokuReader::FoundDuplicateEntryCol;
 //              cerr << "Found column duplicate entry at row " << row+1 << ", col " << col+1 << ".\n";
                 goto cleanup;
