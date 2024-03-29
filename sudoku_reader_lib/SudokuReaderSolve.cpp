@@ -617,7 +617,7 @@ int SudokuReader::doPossPairsPass()
                             // Found the value, store this location
                           //cout << "Value "<<*it<<" is possible in square ["<<r<<"]["<<c<<"]." << endl;
                             assert(*it < squares.size());
-                            squares[*it].push_back({r,c});
+                            squares[*it].push_back(make_tuple(r,c));
                         }
 
                     }

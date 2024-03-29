@@ -11,9 +11,9 @@ Sudoku::Sudoku(void)
     assert(SudokuDim == square.size());
     assert(SudokuDim == square[0].size());
 
-    for (int i ; i < SudokuDim ; i++)
+    for (int i = 0; i < SudokuDim ; i++)
     {
-        for (int j ; j < SudokuDim ; j++ )
+        for (int j = 0 ; j < SudokuDim ; j++ )
         {
             square[i][j] = 0;
         }
