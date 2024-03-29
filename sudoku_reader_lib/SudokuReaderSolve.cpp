@@ -1,6 +1,7 @@
 // Sudoku Reader Solve
 
 #include <vector>
+#include <tuple>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -306,7 +307,7 @@ int SudokuReader::updateSquare()
         {
             cout << "No squares udpated!\n\n";
             cout << "Reducing based on possibility pairs.\n";
-            numUpdated = doPossPairsPass();
+            numUpdated = doLocalSqurePossPairsPass();
 
             if (0 == numUpdated)
             {
@@ -521,7 +522,7 @@ int SudokuReader::doMultiPossPass()
     return numUpdated;
 }
 
-int SudokuReader::doPossPairsPass()
+int SudokuReader::doLocalSqurePossPairsPass()
 {
     int numUpdated = 0;
 
@@ -597,7 +598,7 @@ int SudokuReader::doPossPairsPass()
 
         // For each number, use the list of numbers with only two possibile locations
         // to create a list of the squares that are candidates for the number
-        vector< vector<tuple<int,int>> > squares;
+        vector< vector< tuple<int,int> > > squares;
         squares.resize( 1 + SudokuReader::Dimension );
         for ( auto it = pairs.begin() ; it < pairs.end(); it++ )
         {
@@ -617,7 +618,7 @@ int SudokuReader::doPossPairsPass()
                             // Found the value, store this location
                           //cout << "Value "<<*it<<" is possible in square ["<<r<<"]["<<c<<"]." << endl;
                             assert(*it < squares.size());
-                            squares[*it].push_back(make_tuple(r,c));
+                            squares[*it].push_back( make_tuple(r,c) );
                         }
 
                     }
