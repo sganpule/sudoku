@@ -54,6 +54,7 @@ private:
     int  updateSquare();
     int  doOnePossPass();
     int  doMultiPossPass();
+    int  doPossPairsPass();
 
     void printPoss();
     int  isSolved();

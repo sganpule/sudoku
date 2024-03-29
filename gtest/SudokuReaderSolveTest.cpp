@@ -204,3 +204,17 @@ TEST_F(SudokuReaderSolveTest, MediumInput5) {
     status = m_sr.solve();
     ASSERT_EQ(status, SudokuReader::Solved);
 }
+
+TEST_F(SudokuReaderSolveTest, HardInput2) {
+
+    m_inputFile = "../../inputs/hard_input_2.txt";
+    ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
+
+    // Read file
+    int status = m_sr.readFile(m_fin);
+    ASSERT_EQ(status, SudokuReader::NoError);
+
+    // Solve File
+    status = m_sr.solve();
+    ASSERT_EQ(status, SudokuReader::Solved);
+}
