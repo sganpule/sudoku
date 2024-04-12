@@ -6,6 +6,7 @@
 #include <string>
 #include <assert.h>
 #include <ctype.h>
+#include <algorithm>
 
 #include "SudokuReader.h"
 
