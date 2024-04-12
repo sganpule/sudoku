@@ -54,7 +54,8 @@ private:
     int  updateSquare();
     int  doOnePossPass();
     int  doMultiPossPass();
-    int  doLocalSqurePossPairsPass();
+    int  doLocalSqurePossPairsReduce();
+    int  doLocalSqureSingleColumnPossReduce();
 
     void printPoss();
     int  isSolved();
