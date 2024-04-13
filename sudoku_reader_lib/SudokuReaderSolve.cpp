@@ -113,7 +113,7 @@ void SudokuReader::updatePossLists()
                           poss[sq_row][sq_col].end(),
                           0);
 
-                // Since we know this squre, set this one possibiilty
+                // Since we know this square, set this one possibiilty
                 // -- FYI, this could be '1', but use 'thisElement'
                 //    to make it easier to read when debugging
                 poss[ sq_row ][ sq_col ][ thisElement ] = thisElement;
@@ -307,13 +307,13 @@ int SudokuReader::updateSquare()
         {
             cout << "No squares udpated!\n\n";
             cout << "Reducing based on local square possibility pairs.\n";
-            numUpdated = doLocalSqurePossPairsReduce();
+            numUpdated = doLocalSquarePossPairsReduce();
 /**/
             if (0 == numUpdated)
             {
                 cout << "No squares udpated!\n\n";
                 cout << "Reducing based on local square / single column possibility configurations.\n";
-                numUpdated = doLocalSqureSingleColumnPossReduce();
+                numUpdated = doLocalSquareSingleColumnPossReduce();
 
                 if (0 == numUpdated)
                 {
@@ -537,7 +537,7 @@ int SudokuReader::doMultiPossPass()
     return numUpdated;
 }
 
-int SudokuReader::doLocalSqurePossPairsReduce()
+int SudokuReader::doLocalSquarePossPairsReduce()
 {
     int numUpdated = 0;
 
@@ -744,7 +744,7 @@ static int whichLocalSquare(int row, int col)
     return locSQ;
 }
 
-int  SudokuReader::doLocalSqureSingleColumnPossReduce()
+int  SudokuReader::doLocalSquareSingleColumnPossReduce()
 {
     int numUpdated = 0;
 
@@ -811,7 +811,7 @@ int  SudokuReader::doLocalSqureSingleColumnPossReduce()
                 }
             }
 
-            // If this list of numbers has two or three possible locations
+            // If this list of numbers has only two or three possible locations
             if ( (num_poss == 2) || (num_poss == 3) )
             {
                 // Add this one to list
@@ -865,25 +865,83 @@ int  SudokuReader::doLocalSqureSingleColumnPossReduce()
             cout << "Determining if " << val << " is only in one column...\n";
 
             cout << "Coordinates for " << val << endl;
+            int row = -1;
             int col = -1;
             bool same_col = true;
+            bool same_row = true;
             for ( auto it2 = squares[val].begin(); it2 < squares[val].end(); it2++ )
             {
-                cout << "[" << get<0>((*it2)) << "," << get<1>((*it2)) << "]\n";
+                int this_row = get<0>((*it2));
                 int this_col = get<1>((*it2));
+                cout << "[" << this_row << "," << this_col << "]\n";
 
-                if (col == -1)
+                if (same_row != false)
                 {
-                    col = this_col;
+                    if (row == -1)
+                    {
+                        row = this_row;
+                    }
+                    
+                    if (row != this_row)
+                    {
+                        same_row = false;
+                        cout << "Possible locations for " << val << " are in different rows.\n";
+                    }
                 }
-                
-                if (col != this_col)
+
+                if (same_col != false)
                 {
-                    same_col = false;
-                    cout << "Possible locations for " << val << " are in different columns.\n";
+                    if (col == -1)
+                    {
+                        col = this_col;
+                    }
+                    
+                    if (col != this_col)
+                    {
+                        same_col = false;
+                        cout << "Possible locations for " << val << " are in different columns.\n";
+                    }
+                }
+
+                if ( (same_row == false) && (same_col == false) )
+                {
+                    cout << "Possible locations for " << val << " are in different rows AND columns.\n";
                     break;
                 }
             }
+
+            if (same_row == true)
+            {
+                cout << "Possible locations for " << val << " are only in row " << row << "!\n";
+
+                // Since val1 can only be in this local square in row 'row', we can remove
+                // it from all other possibility lists for this row
+                for ( int col = 0 ; col < Dimension ; col++ )
+                {
+                    // Only do this for rows not in this local square
+                    if (locsq == whichLocalSquare(row, col))
+                    {
+                        continue;
+                    }
+
+                    // This element isn't known yet
+                    if ( !square[row][col] )
+                    {
+                        // If this value is still a possibility
+                        if (poss[row][col][val] == val)
+                        {
+                            cout << "Removing " << val 
+                                                << " from row " << row 
+                                                << ", col " << col 
+                                                << "'s possibility list.\n";
+                            poss[row][col][val] = 0;
+                            numUpdated++;
+                            goto cleanup;
+                        }
+                    }
+                }
+            }
+
             if (same_col == true)
             {
                 cout << "Possible locations for " << val << " are only in column " << col << "!\n";
@@ -915,7 +973,6 @@ int  SudokuReader::doLocalSqureSingleColumnPossReduce()
                     }
                 }
             }
-
         }
     }
 
