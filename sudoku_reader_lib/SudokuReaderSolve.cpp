@@ -318,6 +318,13 @@ int SudokuReader::updateSquare()
                 if (0 == numUpdated)
                 {
                     cout << "No squares udpated!\n\n";
+                    cout << "Reducing based on remaining possibility in a row / column / local square.\n";
+                    numUpdated = doOnlyPossPass();
+
+                    if (0 == numUpdated)
+                    {
+                        cout << "No squares udpated!\n\n";
+                    }
                 }
             }
 /**/
@@ -982,3 +989,52 @@ cleanup:
 
 }
 
+int SudokuReader::doOnlyPossPass()
+{
+    int numUpdated = 0;
+
+    // For each row
+    for (int row = 0 ; row < SudokuReader::Dimension ; row++ )
+    {
+        // For each possible number (1-9), find the number of
+        // occurrances in all the possibility lists
+        for (int num = 1 ; num <= SudokuReader::Dimension ; num++ )
+        {
+            int col = 0;            // column iterator
+            int ffc = 0;            // first found column
+            int num_occurances = 0;
+            bool unknown = true;
+            do
+            {
+                // If this number has already been solved, don't bother
+                if (num == square[row][col])
+                {
+                    unknown = false;
+                    break;
+                }
+                
+                // Find if 'num' occurs in this possibility
+                // list, mark the first list it occurs in 
+                num_occurances += count_if(poss[row][col].begin(),
+                                           poss[row][col].end(),
+                                           [&](const auto& e) { 
+                                                                if ( e == num ) { ffc = col; }
+                                                                return e == num;                    
+                                                              });
+                col++;
+            } while ( (col < SudokuReader::Dimension) && (num_occurances < 2) );
+
+            if ( unknown && (num_occurances == 1) )
+            {
+                cout << num << " is possible " << num_occurances << " time(s) in row: " 
+                     << row << ", at [" << row << "][" << ffc << "].\n";
+                std::fill(poss[row][ffc].begin(), poss[row][ffc].end(), 0);
+                poss[row][ffc][num] = num;
+                numUpdated++;
+            }
+            
+        }
+    }
+
+    return numUpdated;
+}

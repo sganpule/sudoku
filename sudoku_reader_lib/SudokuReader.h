@@ -56,6 +56,7 @@ private:
     int  doMultiPossPass();
     int  doLocalSquarePossPairsReduce();
     int  doLocalSquareSingleColumnPossReduce();
+    int  doOnlyPossPass();
 
     void printPoss();
     int  isSolved();
