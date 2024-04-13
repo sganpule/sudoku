@@ -364,13 +364,9 @@ int SudokuReader::doOnePossPass()
                 numUpdated++;
 
                 assert(SudokuReader::NoError == isValid());
-
-                goto cleanup;
             }
         }
     }
-
-cleanup:
 
     // Update the possibility matrix
     updatePossLists();
@@ -430,7 +426,8 @@ int SudokuReader::doMultiPossPass()
                         numUpdated++;
                         assert(SudokuReader::NoError == isValid());
 
-                        goto cleanup;
+                        // Update the possibility matrix
+                        updatePossLists();
                     }
                 }
             }
@@ -472,7 +469,8 @@ int SudokuReader::doMultiPossPass()
                         numUpdated++;
                         assert(SudokuReader::NoError == isValid());
 
-                        goto cleanup;
+                        // Update the possibility matrix
+                        updatePossLists();
                     }
                 }
             }
@@ -530,16 +528,13 @@ int SudokuReader::doMultiPossPass()
                         numUpdated++;
                         assert(SudokuReader::NoError == isValid());
 
-                        goto cleanup;
+                        // Update the possibility matrix
+                        updatePossLists();
                     }
                 }
             }
         }
     }
-
- cleanup:
-    // Update the possibility matrix
-    updatePossLists();
 
     return numUpdated;
 }
@@ -713,19 +708,11 @@ int SudokuReader::doLocalSquarePossPairsReduce()
                                 numUpdated++;
                             }
                         }
-
-                        goto cleanup;
-
                     }
                 }
-            }
-            
+            }   
         }
-
-
     }
-
-cleanup:
 
     return numUpdated;
 
@@ -941,7 +928,6 @@ int  SudokuReader::doLocalSquareSingleColumnPossReduce()
 //                                              << "'s possibility list.\n";
                             poss[row][col][val] = 0;
                             numUpdated++;
-                            goto cleanup;
                         }
                     }
                 }
@@ -973,15 +959,12 @@ int  SudokuReader::doLocalSquareSingleColumnPossReduce()
 //                                              << "'s possibility list.\n";
                             poss[row][col][val] = 0;
                             numUpdated++;
-                            goto cleanup;
                         }
                     }
                 }
             }
         }
     }
-
-cleanup:
 
     return numUpdated;
 
