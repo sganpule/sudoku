@@ -61,7 +61,7 @@ int SudokuReader::solve()
     }
     else
     {
-#if(1 || PRINT_INFO)
+#if(PRINT_INFO)
         cout << "The square couldn't be solved!\n";
         cout << *this << endl;
 
