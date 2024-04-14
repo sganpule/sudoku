@@ -6,6 +6,7 @@
 #include <string>
 #include <assert.h>
 #include <ctype.h>
+#include <algorithm>
 
 #include "SudokuReader.h"
 
@@ -145,6 +146,26 @@ int SudokuReader::isValid(int* error_row, int* error_col)
             }
         }
     }
+
+
+    // Check that the possibility matrix is valid
+
+    // For each element in 'square'
+    for ( int prow = 0 ; prow < Dimension ; prow++ )
+    {
+        for ( int pcol = 0 ; pcol < Dimension ; pcol++ )
+        {
+            // Find the number of elements that are non-zero
+            int num_poss = count_if(poss[prow][pcol].begin(), 
+                                    poss[prow][pcol].end(), 
+                                    [](int i) { return i!=0; } );
+
+            assert(num_poss > 0);
+            assert(num_poss <= 9);
+        }
+    }
+       
+
 
 cleanup:
     if (retStatus != SudokuReader::NoError)
