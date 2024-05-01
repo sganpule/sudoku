@@ -457,3 +457,72 @@ TEST_F(SudokuReaderSolveTest, MasterInput5) {
     ASSERT_EQ(status, SudokuReader::Solved);
 }
 
+TEST_F(SudokuReaderSolveTest, ExtremeInput1) {
+
+    m_inputFile = "../../inputs/extreme_input_1.txt";
+    ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
+
+    // Read file
+    int status = m_sr.readFile(m_fin);
+    ASSERT_EQ(status, SudokuReader::NoError);
+
+    // Solve File
+    status = m_sr.solve();
+    ASSERT_EQ(status, SudokuReader::Solved);
+}
+
+TEST_F(SudokuReaderSolveTest, ExtremeInput3) {
+
+    m_inputFile = "../../inputs/extreme_input_3.txt";
+    ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
+
+    // Read file
+    int status = m_sr.readFile(m_fin);
+    ASSERT_EQ(status, SudokuReader::NoError);
+
+    // Solve File
+    status = m_sr.solve();
+    ASSERT_EQ(status, SudokuReader::Solved);
+}
+
+TEST_F(SudokuReaderSolveTest, ExtremeInput4) {
+
+    m_inputFile = "../../inputs/extreme_input_4.txt";
+    ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
+
+    // Read file
+    int status = m_sr.readFile(m_fin);
+    ASSERT_EQ(status, SudokuReader::NoError);
+
+    // Solve File
+    status = m_sr.solve();
+    ASSERT_EQ(status, SudokuReader::Solved);
+}
+
+TEST_F(SudokuReaderSolveTest, ExtremeInput5) {
+
+    m_inputFile = "../../inputs/extreme_input_5.txt";
+    ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
+
+    // Read file
+    int status = m_sr.readFile(m_fin);
+    ASSERT_EQ(status, SudokuReader::NoError);
+
+    // Solve File
+    status = m_sr.solve();
+    ASSERT_EQ(status, SudokuReader::Solved);
+}
+
+TEST_F(SudokuReaderSolveTest, ExtremeInput6) {
+
+    m_inputFile = "../../inputs/extreme_input_6.txt";
+    ASSERT_EQ(0, openInputFile(m_fin, m_inputFile));
+
+    // Read file
+    int status = m_sr.readFile(m_fin);
+    ASSERT_EQ(status, SudokuReader::NoError);
+
+    // Solve File
+    status = m_sr.solve();
+    ASSERT_EQ(status, SudokuReader::Solved);
+}

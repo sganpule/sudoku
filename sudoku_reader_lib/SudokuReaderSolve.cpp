@@ -313,7 +313,7 @@ int SudokuReader::updateSquare()
             {
 //              cout << "No squares udpated!\n\n";
 //              cout << "Technique 4 : Reducing based on local square / single column possibility configurations.\n";
-                numUpdated = doLocalSquareSingleColumnPossReduce();
+                numUpdated = doLocalSquareSingleColumnAndRowPossReduce();
 
                 if (0 == numUpdated)
                 {
@@ -718,6 +718,8 @@ int SudokuReader::doLocalSquarePossPairsReduce()
 
 }
 
+// Helper function to determin which local square a given
+// (row, col) pair falls in
 static int whichLocalSquare(int row, int col)
 {
     // Local squares are labelled as:
@@ -736,7 +738,10 @@ static int whichLocalSquare(int row, int col)
     return locSQ;
 }
 
-int  SudokuReader::doLocalSquareSingleColumnPossReduce()
+// For each local square, if a single number is possible in
+// only a particular row or particlar column, remove it from
+// the other lists in that column.
+int  SudokuReader::doLocalSquareSingleColumnAndRowPossReduce()
 {
     int numUpdated = 0;
 

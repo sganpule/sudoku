@@ -55,7 +55,7 @@ private:
     int  doOnePossPass();
     int  doMultiPossPass();
     int  doLocalSquarePossPairsReduce();
-    int  doLocalSquareSingleColumnPossReduce();
+    int  doLocalSquareSingleColumnAndRowPossReduce();
     int  doOnlyPossPass();
 
     void printPoss();
