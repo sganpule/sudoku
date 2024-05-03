@@ -312,7 +312,7 @@ int SudokuReader::updateSquare()
             if (0 == numUpdated)
             {
 //              cout << "No squares udpated!\n\n";
-//              cout << "Technique 4 : Reducing based on local square / single column possibility configurations.\n";
+//              cout << "Technique 4 : Reducing based on local square / single column or row  possibility configurations.\n";
                 numUpdated = doLocalSquareSingleColumnAndRowPossReduce();
 
                 if (0 == numUpdated)
@@ -551,20 +551,14 @@ int SudokuReader::doLocalSquarePossPairsReduce()
     // 0 0 0 3 3 3 6 6 6 Row        == 3 * ( n / 3 )
     // 0 3 6 0 3 6 0 3 6 Col        == 3 * ( n % 3 )
 
-    // Analyze each LOCAL SQUARE
+    // For each LOCAL SQUARE
     for ( int locsq = 0 ; locsq < NumLocalSq ; locsq++ )
     {
 //      if (locsq != 5)
 //          continue;
 
-        int sq_num;
-
-        vector<int> temp;
-
-        int                rstart = 3 * (locsq / LocalSqDim);
-        int                cstart = 3 * (locsq % LocalSqDim);
-
-        sq_num = 0;
+        int rstart = 3 * (locsq / LocalSqDim);
+        int cstart = 3 * (locsq % LocalSqDim);
 /*
         for ( int sq_row = rstart ; sq_row < rstart + LocalSqDim ; sq_row++ )
         {
@@ -583,6 +577,7 @@ int SudokuReader::doLocalSquarePossPairsReduce()
 
         // Find which (if any) numbers have only two possible locations
         // and then create a list with those numbers
+        int sq_num;
         int num_poss;
         vector< int > pairs;
         for ( int val = 0 ; val < 1 + SudokuReader::Dimension ; val++ )
@@ -603,18 +598,25 @@ int SudokuReader::doLocalSquarePossPairsReduce()
             if (num_poss == 2)
             {
                 // Add this one to list of numbers that have only two possible locations
-//              cout << "Found a number that has only two possible locations " << val << endl;
+                cout << "Found a number that has only two possible locations " << val << endl;
                 pairs.push_back(val);
+            }
+            if (num_poss!=3)
+            {
+//              cout << "Found a number that has three locations\n";
             }
         }
 
         // Move to the next local square if there aren't
         // at least two numbers with two possible locations
         if (pairs.size() < 2)
+        {
             continue;
+        }
 
-        // For each number, use the list of numbers with only two possible locations
-        // to create a list of the squares that are candidates for the number
+        // Iterate through 'pairs', the list of numbers with only two possible
+        // locations. For each unsolved location in this local square that is a
+        // possible location for this number, add the location to 'squares'.
         vector< vector< tuple<int,int> > > squares;
         squares.resize( 1 + SudokuReader::Dimension );
         for ( auto it = pairs.begin() ; it < pairs.end(); it++ )
@@ -637,14 +639,13 @@ int SudokuReader::doLocalSquarePossPairsReduce()
                             assert(*it < squares.size());
                             squares[*it].push_back( make_tuple(r,c) );
                         }
-
                     }
                 }
             }
         }
 
-        // For each number with only two possible locations,
-        // compare the lists of possible squares to see if any of them are identical
+        // For each empty space with only two possible locations, compare the
+        // lists of possible squares to see if any of them are identical
         int val1 = 0;
         vector<int> locat;
         vector< tuple<int,int> > locations;
@@ -667,23 +668,29 @@ int SudokuReader::doLocalSquarePossPairsReduce()
                         assert(it2->size() == 2);
 //                      cout << "Found possibility lists that are identical values: " << val1 << " and " << val2 << endl;
 
-                        // Since we have two numbers, with the same two possible locations
-                        // for each, we still don't know which goes where. BUT we do know
-                        // that no other numbers in that location's possibility list can work,
-                        // so we can remove those numbers from that location's possibility list.
+                        // We now have two numbers, val1 and val2, with the same
+                        // two possible locations. We still don't know which goes 
+                        // where. BUT we do know that no other numbers in these
+                        // locations' possibility lists can work, so we can remove
+                        // other numbers from these location's possibility list.
 
                         int r;
                         int c;
                         int val;
 
-                        // Store it1's row and column info
+                        // it1 points to a list of locations (size==2) that are
+                        // both the only candiates for val1 and val2
+
+                        // Store the first of it1's row and column info
+                        // Reminder: list it1 == list it2
                         r   = get<0>((*it1)[0]);
                         c   = get<1>((*it1)[0]);
                         val = 0;
 
-                        // For every element in it1's possiblity list
+                        // For every element in this locations's possiblity list
                         for ( auto it3 = poss[r][c].begin() ; it3 != poss[r][c].end() ; it3++, val++ )
                         {
+                            // And isn't equal to 0, val1, or val2
                             if (   (0 != *it3) &&
                                  ( (val1 != *it3) && (val2 != *it3) )
                                )
@@ -694,6 +701,8 @@ int SudokuReader::doLocalSquarePossPairsReduce()
                             }
                         }
 
+                        // Store the second of it1's row and column info
+                        // Reminder: list it1 == list it2
                         r   = get<0>((*it1)[1]);
                         c   = get<1>((*it1)[1]);
                         val = 0;
@@ -741,7 +750,7 @@ static int whichLocalSquare(int row, int col)
 // For each local square, if a single number is possible in
 // only a particular row or particlar column, remove it from
 // the other lists in that column.
-int  SudokuReader::doLocalSquareSingleColumnAndRowPossReduce()
+int SudokuReader::doLocalSquareSingleColumnAndRowPossReduce()
 {
     int numUpdated = 0;
 
@@ -760,14 +769,10 @@ int  SudokuReader::doLocalSquareSingleColumnAndRowPossReduce()
 //      if (( locsq != 2) && (locsq != 2))
 //          continue;
 
-        int sq_num;
+        int sq_num = 0;
+        int rstart = 3 * (locsq / LocalSqDim);
+        int cstart = 3 * (locsq % LocalSqDim);
 
-        vector<int> temp;
-
-        int                rstart = 3 * (locsq / LocalSqDim);
-        int                cstart = 3 * (locsq % LocalSqDim);
-
-        sq_num = 0;
 /*
         for ( int sq_row = rstart ; sq_row < rstart + LocalSqDim ; sq_row++ )
         {
